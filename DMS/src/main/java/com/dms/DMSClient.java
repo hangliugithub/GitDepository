@@ -489,7 +489,7 @@ public class DMSClient {
 				
 				list.add(log);
 				//打桩
-//				System.out.println(log);
+				//System.out.println(log);
 				
 				//当解析完一条日志后，更新lastPosition
 				lastPosition = raf.getFilePointer();
