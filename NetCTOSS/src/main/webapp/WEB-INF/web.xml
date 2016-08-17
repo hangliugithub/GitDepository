@@ -10,45 +10,33 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-  	<servlet-name>main</servlet-name>
-  	<servlet-class>web.MainServlet</servlet-class>
+    <servlet-name>main</servlet-name>
+    <servlet-class>web.MainServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>main</servlet-name>
-  	<url-pattern>*.do</url-pattern>
+    <servlet-name>main</servlet-name>
+    <url-pattern>*.do</url-pattern>
   </servlet-mapping>
-  
-  <!-- 异常处理 
-  	告诉tomcat什么类型/编号的异常，跳转/转发到那个错误页面
-  	类型：except-type
-  	编号：error-code
-  	注意：此处页面的路径采用绝对路径，tomcat在转发时会自动补充项目名，因此这里不要增加项目名-->
-  <!-- 1.异常编号 -->
   <error-page>
-  	<error-code>404</error-code>
-  	<location>/WEB-INF/error.jsp</location>
+    <error-code>404</error-code>
+    <location>/WEB-INF/error.jsp</location>
   </error-page>
   <error-page>
-  	<error-code>500</error-code>
-  	<location>/WEB-INF/error.jsp</location>
+    <error-code>500</error-code>
+    <location>/WEB-INF/error.jsp</location>
   </error-page>
-  
-  <!-- session的超时时间
-  	当用户访问服务器后，如果他不做任何操作，空闲时间超出此时间，
-  	tomcat就会销毁此用户对应的session -->
   <session-config>
-  	<!-- 单位：分钟 -->
-  	<session-timeout>10</session-timeout>
+    <session-timeout>10</session-timeout>
   </session-config>
+  
+  <!-- 登录检查拦截器 -->
+  <filter>
+    <display-name>LoginFilter</display-name>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>web.LoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
 </web-app>
-
-
-
-
-
-
-
-
-
-
-
