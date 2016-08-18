@@ -41,6 +41,8 @@ public class MainServlet extends HttpServlet {
 			modifyCost(req,res);
 		}else if("/detialCost.do".equals(path)){
 			detialCost(req,res);
+		}else if("/activeCost.do".equals(path)){
+			activeCost(req,res);
 		}else if("/toLogin.do".equals(path)){
 			toLogin(req,res);
 		}else if("/login.do".equals(path)){
@@ -49,11 +51,42 @@ public class MainServlet extends HttpServlet {
 			toIndex(req,res);
 		}else if("/createImg.do".equals(path)){
 			createImg(req,res);
+		}else if("/logout.do".equals(path)){
+			logout(req,res);
 		}else{
 			throw new RuntimeException("没有这个页面！");
 		}
 	}
 	
+	/**
+	 * 启用资费
+	 * @param req
+	 * @param res
+	 * @throws IOException 
+	 * @throws ServletException 
+	 */
+	private void activeCost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+		// TODO Auto-generated method stub
+		System.out.println("active");
+		req.setCharacterEncoding("utf-8");
+		String costId = req.getParameter("costId");
+		new CostDao().activeCost(costId);
+		res.sendRedirect("findCost.do");
+	}
+
+	/**
+	 * 退出登录
+	 * @param req
+	 * @param res
+	 * @throws IOException 
+	 */
+	private void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		//移除session已存的登录用户
+		req.getSession().removeAttribute("adminCode");
+		//重定向到登录页面
+		res.sendRedirect("/NetCTOSS/toLogin.do");
+	}
+
 	/**
 	 * 生成验证码
 	 * @param req

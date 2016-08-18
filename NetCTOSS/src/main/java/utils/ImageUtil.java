@@ -26,7 +26,7 @@ public final class ImageUtil {
 	// 高度
 	private static final int HEIGHT = 30;
 	// 字体大小
-	private static final int FONT_SIZE = 15;
+	private static final int FONT_SIZE = 20;
 
 	/**
 	 * 生成随机验证码及图片

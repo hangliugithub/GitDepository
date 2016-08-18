@@ -27,9 +27,17 @@
             }
 
             //启用
-            function startFee() {
-                var r = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
-                document.getElementById("operate_result_info").style.display = "block";
+            function startFee(costId,status) {
+            	alert("hello");
+            	if(status==0){
+            		alert("该套餐已开通！");
+            	}else{
+            		var r = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
+                    if(r){
+                    	console.log("hellowoe");
+                    	location.href="activeCost.do?costId="+costId;
+                    }
+            	}
             }
             //删除
             function deleteFee(btn) {
@@ -84,7 +92,7 @@
                 <!--启用操作的操作提示-->
                 <div id="operate_result_info" class="operate_success">
                     <img src="./images/close.png" onclick="this.parentNode.style.display='none';" />
-                    删除成功！
+                    	操作成功！
                 </div>    
                 <!--数据区域：用表格展示数据-->     
                 <div id="data">            
@@ -114,7 +122,7 @@
                             	<c:if test="${c.status==1 }">暂停</c:if>
                             </td>
                             <td>                                
-                                <input type="submit" value="启用" class="btn_start" onclick="startFee();" />
+                                <input type="button" value="启用" class="btn_start" onclick="startFee(${c.costId},${c.status });" />
                                 <input type="submit" value="修改" class="btn_modify" onclick="modifyCost(this);" />
                                 <input type="submit" value="删除" class="btn_delete" onclick="deleteFee(this);" />
                             </td>

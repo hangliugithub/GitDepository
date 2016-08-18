@@ -245,6 +245,30 @@ public class CostDao {
 			
 		}
 	}
+	
+	public void activeCost(String id){
+		System.out.println("hello");
+		String sql = "UPDATE COST_JESSE SET status='0' WHERE cost_id=?";
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, new Integer(id));
+			if(ps.executeUpdate()>0){
+				System.out.println("修改状态成功！");
+			}else{
+				throw new RuntimeException("启用失败！");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				DBUtil.close(conn);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
 
 

@@ -9,4 +9,4 @@
 
 <!--  从session获取账户名-->
 <span style="color:#fff;font-size:15px;">欢迎您,${adminCode }</span>
-<a href="#">[退出]</a>
+<a href="#" onclick="location.href='logout.do';">[退出]</a>
