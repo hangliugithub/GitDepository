@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+	version="2.1">
+
+	<description>Jesse's Tag Library</description>
+	<display-name>JSTL Jesse</display-name>
+	<tlib-version>1.0</tlib-version>
+	<short-name>t</short-name>
+	<uri>jessehu1520@outlook.com</uri>
+	
+	<tag>
+		<description>这个标签额可以输出当前服务器时间，并且允许使用者指定时间格式</description>
+		<name>sysdate</name>
+		<tag-class>web.SysdateTag</tag-class>
+		
+		<!-- 声明标签中间内容的类型 -->
+		<body-content>empty</body-content>
+		<attribute>
+			<description>声明时间的格式</description>
+			<name>format</name>
+			<!-- 该属性是否必须输入 -->
+			<required>false</required>
+			<!-- 是否允许使用EL传值 -->
+			<rtexprvalue>true</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+</taglib>
