@@ -7,6 +7,6 @@
 <title>错误</title>
 </head>
 <body>
-	字符串索引越界
+	系统繁忙！
 </body>
 </html>

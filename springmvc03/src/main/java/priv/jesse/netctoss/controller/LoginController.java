@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import priv.jesse.netctoss.entity.Admin;
@@ -35,21 +36,9 @@ public class LoginController {
 		System.out.println(adminCode+":"+password);
 		
 		//暂时不做参数值合法性检查
-		try{
-			Admin admin = service.checkLogin(adminCode, password);
-			//登录成功将将admin对象绑定到session对象上，用于session验证
-			session.setAttribute("admin", admin);
-		}catch(Exception e){
-			e.printStackTrace();
-			if(e instanceof ApplicationException){
-				//应用异常，明确提示用户
-				String message = e.getMessage();
-				req.setAttribute("error", message);
-				return "main/login";
-			}else{
-				return "error";
-			}
-		}
+		Admin admin = service.checkLogin(adminCode, password);
+		//登录成功将将admin对象绑定到session对象上，用于session验证
+		session.setAttribute("admin", admin);
 		//登录成功，重定向到首页
 		return "redirect:toIndex.do";
 	}
@@ -59,6 +48,15 @@ public class LoginController {
 		return "main/index";
 	}
 	
+	@ExceptionHandler
+	public String execute(Exception ex,HttpServletRequest req){
+		if(ex instanceof ApplicationException){
+			req.setAttribute("error", ex.getMessage());
+			return "main/login";
+		}else{
+			return "error";
+		}
+	}
 }
 
 

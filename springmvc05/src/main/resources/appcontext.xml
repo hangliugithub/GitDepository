@@ -32,6 +32,7 @@
 	</bean>
 	
 	<!-- 配置简单异常处理器 -->
+	<!-- 
 	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
 			<props>
@@ -40,7 +41,7 @@
 			</props>
 		</property>
 	</bean>
-	
+	 -->
 	
 </beans>
 
