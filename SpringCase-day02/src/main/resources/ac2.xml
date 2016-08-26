@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+	
+	
+	<!-- 
+		value属性：指定要注入的基本类型的值，会自动做类型转换 
+	 -->	
+	<bean id="eb" class="value.ExampleBean">
+		<property name="name" value="宝宝"/>
+		<property name="age" value="22"/>
+		<property name="interest">
+			<list>
+				<value>PHP</value>
+				<value>Sport</value>
+				<value>Game</value>
+			</list>
+		</property>
+		<property name="city">
+			<set>
+				<value>北京</value>
+				<value>纽约</value>
+				<value>东京</value>
+			</set>
+		</property>
+		
+		<property name="score">
+			<map>
+				<entry key="Math" value="100"/>
+				<entry key="Chinese" value="90"/>
+				<entry key="English" value="99"/>
+			</map>
+		</property>
+		
+		<property name="db">
+			<props>
+				<prop key="username">scott</prop>
+				<prop key="password">tiger</prop>
+			</props>
+		</property>
+		</bean>
+		
+		
+		<!-- 以引用的方法注入集合类型的值-->
+		<util:list id="interestBean">
+			<value>吉他</value>
+			<value>书法</value>
+			<value>摄影</value>
+		</util:list>
+		<util:set id="cityBean">
+			<value>北京</value>
+			<value>西雅图</value>
+			<value>巴黎</value>
+		</util:set>
+		<util:map id="scoreBean">
+			<entry key="Chinese" value="90"/>
+			<entry key="Math" value="99"/>
+			<entry key="English" value="90"/>
+		</util:map>
+		<util:properties id="dbBean">
+			<prop key="username">Jesse</prop>
+			<prop key="password">123456</prop>
+		</util:properties>
+		
+		<bean id="eb2" class="value.ExampleBean">
+			<property name="interest" ref="interestBean"/>
+			<property name="city" ref="cityBean"/>
+			<property name="score" ref="scoreBean"/>
+			<property name="db" ref="dbBean"/>
+		</bean>
+		
+		<!-- 
+			依据location指定的位置，读取.properties的内容，并且将内容存放到Properties对象里
+		 -->
+		<util:properties id="conf" location="classpath:conf.properties"/>
+		
+		<!-- 使用spring表达式来获取其他bean的属性值 -->
+		<bean id="sb1" class="value.SomeBean">
+			<property name="ename" value="#{eb.name}"/>
+			<property name="interest" value="#{eb.interest[0]}"/>
+			<property name="score" value="#{eb.score.English}"/>
+			<property name="pageSize" value="#{conf.pageSize}"/>
+		</bean>
+		
+		
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
