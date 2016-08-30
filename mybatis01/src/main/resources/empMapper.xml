@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="dao.EmpMapper">
+	<select id="findAll" resultType="entity.Emp">
+		select * from emp
+	</select>
+
+	<select id="findById" parameterType="integer" resultType="entity.Emp">
+		select * from emp where id=#{id}
+	</select>
+
+	<insert id="save" parameterType="entity.Emp">
+		insert into emp values(
+			default,
+			#{name},
+			#{age}
+		)
+	</insert>
+
+	<update id="update" parameterType="entity.Emp">
+		update emp set
+		name=#{name},
+		age=#{age}
+		where id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="integer">
+		delete from emp where id=#{id}
+	</delete>
+	
+	<select id="findById2" parameterType="integer" resultType="map">
+		select * from emp where id=#{id}
+	</select>
+	
+</mapper>
+
+
+
