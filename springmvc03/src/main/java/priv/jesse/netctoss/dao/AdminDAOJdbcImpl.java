@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import priv.jesse.netctoss.entity.Admin;
 
 //³Ö¾Ã²ã
-@Repository("adminDAO")
+//@Repository("adminDAO")
 public class AdminDAOJdbcImpl implements AdminDAO {
 	@Resource(name = "datasource")
 	private DataSource ds;

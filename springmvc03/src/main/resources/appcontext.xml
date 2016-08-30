@@ -43,11 +43,11 @@
 	</bean>
 	
 	<!-- 读取conf.properites  -->
-	<util:properties id="config" location="classpath:conf.properties"/>
+	<util:properties id="config" location="classpath:mysqlconf.properties"/>
 	<!-- 配置DataSource数据源 -->
 	<bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="#{config.driverName}"/>
-		<property name="url" value="#{config.host}"/>
+		<property name="url" value="#{config.url}"/>
 		<property name="username" value="#{config.username}"/>
 		<property name="password" value="#{config.password}"/>
 		<property name="maxActive" value="#{config.maxActive}"/>

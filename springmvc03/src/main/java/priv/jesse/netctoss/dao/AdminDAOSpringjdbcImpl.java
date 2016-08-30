@@ -8,15 +8,16 @@ import javax.annotation.Resource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import priv.jesse.netctoss.entity.Admin;
-
+@Repository("adminDAO")
 public class AdminDAOSpringjdbcImpl implements AdminDAO {
 	@Resource(name="jdbcTemplate")
 	private JdbcTemplate template;
 	
 	public Admin findByAdminCode(String code) {
-		String sql = "SELECT * FROM admin_info_jesse WHERE admin_code=?";
+		String sql = "SELECT * FROM admin_info WHERE admin_code=?";
 		Object[] params = new Object[]{code};
 		List<Admin> admin = template.query(sql, params, new AdminRowMapper());
 		if(admin!=null && !admin.isEmpty()){

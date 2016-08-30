@@ -21,13 +21,13 @@ public class EmpDAOSpringjdbcImpl implements EmpDAO {
 	 * springjdbc 会将底层异常封装成RuntimeException抛出
 	 */
 	public void save(Emp emp) {
-		String sql = "INSERT INTO employee_jesse VALUES(employee_seq_jesse.NEXTVAL,?,?)";
+		String sql = "INSERT INTO emp (name,age) VALUES (?,?)";
 		Object[] params = new Object[] { emp.getName(), emp.getAge() };
 		template.update(sql, params);
 	}
 
 	public List<Emp> findAll() {
-		String sql = "SELECT * FROM employee_jesse";
+		String sql = "SELECT * FROM emp";
 		return template.query(sql, new EmpRowMapper());
 	}
 
@@ -51,13 +51,13 @@ public class EmpDAOSpringjdbcImpl implements EmpDAO {
 	}
 
 //	public Emp findById(int id) {
-//		String sql = "SELECT * FROM employee_jesse WHERE id=?";
+//		String sql = "SELECT * FROM emp WHERE id=?";
 //		Object[] params = new Object[]{id};
 //		return template.queryForObject(sql,params, new EmpRowMapper());
 //	}
 	
 	public Emp findById(int id){
-		String sql = "SELECT * FROM employee_jesse WHERE id=?";
+		String sql = "SELECT * FROM emp WHERE id=?";
 		Object[] params = new Object[]{id};
 		List<Emp> emps = template.query(sql, params, new EmpRowMapper());
 		if(emps != null && !emps.isEmpty()){
@@ -68,14 +68,14 @@ public class EmpDAOSpringjdbcImpl implements EmpDAO {
 	}
 
 	public void delete(int id) {
-		String sql = "DELETE FROM employee_jesse WHERE id=?";
+		String sql = "DELETE FROM emp WHERE id=?";
 		Object[] params = new Object[]{id};
 		template.update(sql, params);
 
 	}
 
 	public void updata(Emp emp) {
-		String sql = "UPDATE employee_jesse SET name=?,age=? WHERE id=?";
+		String sql = "UPDATE emp SET name=?,age=? WHERE id=?";
 		Object[] params = new Object[]{emp.getName(),emp.getAge(),emp.getId()};
 		template.update(sql, params);
 	}

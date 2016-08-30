@@ -11,6 +11,13 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>3.2.8.RELEASE</version>
 		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.39</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.hynnet</groupId>
 			<artifactId>oracle-driver-ojdbc6</artifactId>
