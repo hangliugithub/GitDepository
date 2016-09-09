@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+    	<!-- 配置单个别名 -->
+    	<!-- <typeAlias type="priv.jesse.netctoss.entity.Admin" alias="admin"/> -->
+    	<!-- 批量配置别名 -->
+    	<package name="priv.jesse.cloudnote.entity"/>
+    </typeAliases>
+    
+    <!-- 注册empMapper.xml文件 -->
+    <!-- <mappers>
+    	<mapper resource="empMapper.xml"/>
+    	<package name="priv.jesse.netctoss.dao"/>
+    </mappers> -->
+</configuration>
