@@ -2,6 +2,8 @@ package priv.jesse.netctoss.entity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 /**
  * jdbc支持的时间是java.sql包下的时间
  * java.sql.Date(年月日)

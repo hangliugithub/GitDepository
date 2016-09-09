@@ -67,8 +67,8 @@ public class LoginController {
 	@RequestMapping("/logout.do")
 	public String logout(HttpServletRequest req){
 		HttpSession session = req.getSession();
-		session.removeAttribute("admin");
-		return "rediract:/netctoss-springmvc/toLogin.do";
+		session.invalidate();
+		return "redirect:toLogin.do";
 		
 	}
 	

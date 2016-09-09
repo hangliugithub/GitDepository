@@ -9,4 +9,4 @@
 
 <!--  从session获取账户名-->
 <span style="color:#fff;font-size:15px;">欢迎您,${admin.adminCode }</span>
-<a href="#" onclick="location.href='logout.do';">[退出]</a>
+<a href="#" onclick="javascript:location.href='/netctoss-springmvc/logout.do';">[退出]</a>

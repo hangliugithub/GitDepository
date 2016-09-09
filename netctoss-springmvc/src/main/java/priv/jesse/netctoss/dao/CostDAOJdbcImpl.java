@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
 
 import priv.jesse.netctoss.entity.Cost;
 
-@Repository("costDAO")
+//@Repository("costDAO")
 public class CostDAOJdbcImpl implements CostDAO {
 
-	@Resource(name="dataSource")
+//	@Resource(name="dataSource")
 	private DataSource ds;
 	
 	public List<Cost> findAll() {

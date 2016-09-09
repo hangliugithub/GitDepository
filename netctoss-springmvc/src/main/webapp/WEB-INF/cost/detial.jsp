@@ -24,9 +24,9 @@
         <div id="main">            
             <form action="" method="post" class="main_form">
                 <div class="text_info clearfix"><span>资费ID：</span></div>
-                <div class="input_info"><input type="text" class="readonly" readonly="readonly" value="1" />${cost.costId }</div>
+                <div class="input_info"><input type="text" class="readonly" readonly="readonly" value="${cost.costId }" /></div>
                 <div class="text_info clearfix"><span>资费名称：</span></div>
-                <div class="input_info"><input type="text" class="readonly" readonly="readonly" value="包 20 小时"/>${cost.name }</div>
+                <div class="input_info"><input type="text" class="readonly" readonly="readonly" value="${cost.name }"/></div>
                 <div class="text_info clearfix"><span>资费状态：</span></div>
                 <div class="input_info">
                     <select class="readonly" disabled="disabled" id="status">

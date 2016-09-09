@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans
-	xmlns="http://www.springframework.org/schema/beans" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context" 
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
-	xmlns:jee="http://www.springframework.org/schema/jee" 
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:aop="http://www.springframework.org/schema/aop" 
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:util="http://www.springframework.org/schema/util"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
@@ -21,40 +16,57 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 	<!-- 配置组件扫描 -->
-	<context:component-scan base-package="priv.jesse.netctoss"/>
-	<!-- 配置mvc注解扫描(@RequestMapping)  -->
-	<mvc:annotation-driven/>
-	
+	<context:component-scan base-package="priv.jesse.netctoss" />
+	<!-- 配置mvc注解扫描(@RequestMapping) -->
+	<mvc:annotation-driven />
+
 	<!-- 配置拦截器 -->
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<mvc:mapping path="/**"/>
-			<mvc:exclude-mapping path="/toLogin.do"/>
-			<mvc:exclude-mapping path="/login.do"/>
-			<mvc:exclude-mapping path="/createImg.do"/>
-			<bean class="priv.jesse.netctoss.interceptors.SessionInterceptor"/>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/toLogin.do" />
+			<mvc:exclude-mapping path="/login.do" />
+			<mvc:exclude-mapping path="/createImg.do" />
+			<bean class="priv.jesse.netctoss.interceptors.SessionInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
-	
+
 	<!-- 配置ViewResolver -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/"/>
-		<property name="suffix" value=".jsp"/>
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/" />
+		<property name="suffix" value=".jsp" />
 	</bean>
-	
-	<!-- 读取conf.properites  -->
-	<util:properties id="config" location="classpath:conf.properties"/>
+
+	<!-- 读取conf.properites -->
+	<util:properties id="config" location="classpath:dbconf_MySql.properties" />
 	<!-- 配置DataSource数据源 -->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="#{config.driverName}"/>
-		<property name="url" value="#{config.host}"/>
-		<property name="username" value="#{config.username}"/>
-		<property name="password" value="#{config.password}"/>
-		<property name="maxActive" value="#{config.maxActive}"/>
-		<property name="maxWait" value="#{config.maxWait}"/>
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="#{config.driverClassName}" />
+		<property name="url" value="#{config.url}" />
+		<property name="username" value="#{config.username}" />
+		<property name="password" value="#{config.password}" />
+		<property name="maxActive" value="#{config.maxActive}" />
+		<property name="maxWait" value="#{config.maxWait}" />
 	</bean>
-	
-	
+
+
+	<!-- MyBatis配置 -->
+	<!-- session工厂 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 配置数据源 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- mabatis配置文件 -->
+		<property name="configLocation" value="classpath:mybatisConf.xml"/>
+		
+		<property name="mapperLocations" value="classpath*:*Mapper.xml" />
+	</bean>
+	<!--定义SqlSessionTemplate -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
 </beans>
 
 
