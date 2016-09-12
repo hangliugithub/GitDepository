@@ -7,10 +7,5 @@
     	<!-- 批量配置别名 -->
     	<package name="priv.jesse.cloudnote.entity"/>
     </typeAliases>
-    
-    <!-- 注册empMapper.xml文件 -->
-    <!-- <mappers>
-    	<mapper resource="empMapper.xml"/>
-    	<package name="priv.jesse.netctoss.dao"/>
-    </mappers> -->
+
 </configuration>
