@@ -67,7 +67,7 @@ function addCookie(objName,objValue,objHours){      //添加cookie
 
  
 
-function SetCookie(name,value)//两个参数，一个是cookie的名子，一个是值
+function setCookie(name,value)//两个参数，一个是cookie的名子，一个是值
 
 {
 

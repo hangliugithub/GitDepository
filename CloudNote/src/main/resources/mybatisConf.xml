@@ -7,5 +7,6 @@
     	<!-- 批量配置别名 -->
     	<package name="priv.jesse.cloudnote.entity"/>
     </typeAliases>
+    
 
 </configuration>

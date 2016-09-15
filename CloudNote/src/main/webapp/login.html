@@ -1,7 +1,13 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8"/>
+<title>登录</title>
 <link rel="stylesheet" href="styles/login.css"/>
+<script type="text/javascript" src="scripts/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/cookie_util.js"></script>
+<script type="text/javascript" src="scripts/const.js"></script>
+<script type="text/javascript" src="scripts/login.js"></script>
 </head>
 	<body>
 		<div class="global">
@@ -15,12 +21,12 @@
 					<dt></dt>
 					<dt>
 						<div class='letter'>
-							用户名:&nbsp;<input type="text" name="" id="count" tabindex='1'/>
+							用户名:&nbsp;<input type="text" name="name" id="count" tabindex='1'/>
 						</div>
 					</dt>
 					<dt>
 						<div class='letter'>
-							密&nbsp;&nbsp;&nbsp;码:&nbsp;<input type="password" name="" id="password" tabindex='2'/>
+							密&emsp;码:&nbsp;<input type="password" name="password" id="password" tabindex='2'/>
 						</div>
 					</dt>
 					<dt>
@@ -47,18 +53,19 @@
 					</dt>
 					<dt>
 						<div class='letter'>
-							昵&nbsp;&nbsp;&nbsp;称:&nbsp;<input type="text" name="" id="nickname" tabindex='6'/>
+							昵&emsp;称:&nbsp;<input type="text" name="" id="nickname" tabindex='6'/>
+							<div class='warning' id='warning_4'><span>该昵称名不可用</span></div>
 						</div>
 					</dt>
 					<dt>
 						<div class='letter'>
-							密&nbsp;&nbsp;&nbsp;码:&nbsp;<input type="password" name="" id="regist_password" tabindex='7'/>
+							密&emsp;码:&nbsp;<input type="password" name="" id="regist_password" tabindex='7'/>
 							<div class='warning' id='warning_2'><span>密码长度过短</span></div>
 						</div>
 					</dt>
 					<dt>
 						<div class='password'>
-							&nbsp;&nbsp;&nbsp;确认密码:&nbsp;<input type="password" name="" id="final_password" tabindex='8'/>
+							&emsp;&emsp;确认密码:<input type="password" name="" id="final_password" tabindex='8'/>
 							<div class='warning' id='warning_3'><span>密码输入不一致</span></div>
 						</div>
 					</dt>
@@ -80,19 +87,7 @@
 							}
 							window.onload=function(){
 								var t =setTimeout("get('zc').style.visibility='visible'",800);
-								get('final_password').onblur=function(){
-									var npassword=get('regist_password').value;
-									var fpassword=get('final_password').value;
-									if(npassword!=fpassword){
-										get('warning_3').style.display='block';
-									}
-								}
-								get('regist_password').onblur=function(){
-									var npassword=get('regist_password').value.length;
-									if(npassword<6&&npassword>0){
-										get('warning_2').style.display='block';
-									}
-								}
+								
 								get('regist_password').onfocus=function(){
 									get('warning_2').style.display='none';
 								}

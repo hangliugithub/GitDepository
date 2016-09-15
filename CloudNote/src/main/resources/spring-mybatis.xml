@@ -39,7 +39,7 @@
         <!-- mabatis配置文件 -->
 		<property name="configLocation" value="classpath:mybatisConf.xml"/>
 		<!-- mapper映射文件 -->
-        <property name="mapperLocations" value="classpath:mapper/*.xml" />
+        <property name="mapperLocations" value="classpath*:mapper/*.xml" />
     </bean>
 
     <!-- 配置Mapper接口扫描 -->

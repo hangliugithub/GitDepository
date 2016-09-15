@@ -1,11 +1,11 @@
-ï»¿*{
+*{
 	padding:0;
 	margin:0;
 }
 body{
 	background:#232332;
 	overflow:hidden;
-	font-family:'å¾®è½¯é›…é»‘';
+	font-family:'Î¢ÈíÑÅºÚ';
 }
 .global{
 	width:1px;
@@ -107,7 +107,7 @@ dt{
 }
 h3{
 	line-height:55px;
-	font-family:'å®‹ä½“';
+	font-family:'ËÎÌå';
 	font-size:25px;
 	font-weight:400;
 	text-indent:1.5em;
@@ -184,3 +184,7 @@ input[type=button]:hover{
 	z-index:1;
 }
 /*----*/
+
+input[type=text].error,input[type=password].error{
+	border-color:red;
+}
