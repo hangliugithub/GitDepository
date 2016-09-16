@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="priv.jesse.cloudnote.dao.NotebookDAO">
+	<!-- 通过userId查找该用户所拥有的笔记本 -->
+	<select id="findNotebookByUserId" parameterType="string" resultType="map">
+		SELECT 
+			cn_notebook_id as id,
+			cn_notebook_name as name 
+		FROM 
+			cn_notebook 
+		WHERE 
+			cn_user_id=#{value}
+	</select>
+</mapper>
