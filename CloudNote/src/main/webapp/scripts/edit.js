@@ -6,20 +6,53 @@
 //页面加载后获取登录用户的id
 $(function(){
 	var userId = getCookie("userId");
+	model.userId = userId;
 	console.log('userId:'+userId);
 	listNotebooksAction(userId);
 	//为保存按钮添加保存方法
-	$('#save_note').click(savaNoteAction);
+	$('#save_note').click(saveNoteAction);
 	//为添加笔记按钮绑定事件
 	$('#add_note').click(addNoteAction);
+	//为添加笔记本按钮绑定事件
+	$('#add_notebook').click(addNotebookAction);
+	//为退出登录按钮绑定事件
+	$('#logout').click(function(){
+		$(this).attr('href',baseUrl+'/account/logout.do')
+		$.cookie('userId',null);
+		$.cookie('userName',null);
+		$.cookie('userNick',null);
+	});
 	
+	$('#input_note_title').blur(function(){
+		if($.isEmptyObject(model.currentNote)){
+			alert('请选择一个笔记！');
+		}
+	});
 });
 
+ //重写JS原生alert函数
+window.alert=function(e){
+	$('#can').load('./alert/alert_error.html',function(){
+		$('#error_info').text(' '+e);
+		$('.opacity_bg').fadeIn();
+		$('#can .cancle,#can .close').click(function(){
+			$('#can div').fadeOut('500',function(){
+				$('.opacity_bg').fadeOut();
+				$('#can').empty();
+			});
+		});
+		$('#can div').fadeIn('1000');
+	});
+}
+
 var model = {
+				userId:{},
 				notebooks:[],
 				currentNotebook:{},
+				notebookIndex:0,
 				notes:[],
-				currentNote:{}
+				currentNote:{},
+				noteIndex:0
 			};
 
 function listNotebooksAction(userId){
@@ -39,7 +72,7 @@ function listNotebooksAction(userId){
 //		}
 //	});
 
-	$.getJSON(baseUrl+'/notebook/listNotebooks.do?userId='+userId,function(result){
+	$.getJSON(baseUrl+'/notebook/listNotebooks.do?userId='+userId+'&nocache='+new Date().getTime(),function(result){
 			if(result.state==SUCCESS){
 				var list = result.data;
 //				for(var i=0;i<list.length;i++){
@@ -87,6 +120,15 @@ function paintNotebooks(){
 			//console.log(index);
 			var notebook = list[index];
 			model.currentNotebook = notebook;
+			model.notebookIndex=index;
+			
+			model.currentNote={};
+			model.noteIndex=0;
+			
+			//切换笔记本时自动保存正在编辑的笔记
+			//saveNoteAction();
+			
+			
 			//console.log(notebook);
 			listCurrentNotesAction();
 		});
@@ -100,7 +142,7 @@ function paintNotebooks(){
  */
 function listCurrentNotesAction(){
 	var notebookId = model.currentNotebook.id;
-	var url = baseUrl+'/notebook/note/listNotes.do?notebookId='+notebookId;
+	var url = baseUrl+'/notebook/note/listNotes.do?notebookId='+notebookId+'&nocache='+new Date().getTime();
 	//console.log(url);
 	//发起异步请求获取notes
 	$.getJSON(url,function(result){
@@ -120,10 +162,11 @@ function listCurrentNotesAction(){
  */
 function paintNotes(){
 	var list = model.notes;
+	//console.log(list);
 	var ul = $('#notes').empty();
 	for(var i=0;i<list.length;i++){
 		//console.log(list);
-		var li = '<li class="online">'+
+		var li = '<li class="online" style="display:none;">'+
 					'<a>'+
 						'<i class="fa fa-file-text-o" title="online" rel="tooltip-bottom"></i>'+
 						 list[i].title+
@@ -141,29 +184,45 @@ function paintNotes(){
 		ul.append(li);
 		//为li下的a绑定事件
 		li.children('a').click(function(){
+			
+			//切换笔记时自动保存正在编辑的笔记
+			saveNoteAction();
+			
 			//console.log($(this));
 			//添加点击效果
 			$(this).parent().parent().find('a').removeClass('checked');
 			$(this).parent().parent().find('button').attr('disabled','disabled');
 			$(this).parent().parent().find('.note_menu').slideUp('100');
 			$(this).addClass('checked');
-			$(this).children('button').removeAttr('disabled');
+			$(this).parent().find('button').removeAttr('disabled');
 			var index = $(this).parent().data('index');
 			model.currentNote = list[index];
+			model.noteIndex=index;
 			loadNoteAction(list[index].id);
 			//阻止事件传播
 			return false;
 		});
 		//为菜单按钮绑定事件
-		li.find('button').click(function(){
+		li.find('.btn_slide_down').click(function(){
 			//console.log($(this));
 			$(this).parent().next().slideToggle();
 			return false;
 		});
 		
+		//为删除笔记按钮添加绑定事件
+		li.find('.btn_delete').click(deleteNoteAction);
+		//为移动笔记按钮绑定事件
+		li.find('.btn_move').click(moveNoteAction);
+		
+		var note = list[i];
+		if(model.currentNote.id){
+			if(note.id==model.currentNote.id){
+				li.children('a').addClass('checked');
+			}
+		}
 	}
-	
-	ul.find('a').eq(0).click();
+	ul.children('li').fadeIn('200');
+	//ul.find('a').eq(0).click();
 }
 
 function loadNoteAction(noteId){
@@ -187,10 +246,14 @@ function paintCurrentNote(){
 	um.setContent(body);
 }
 
-function savaNoteAction(){
+function saveNoteAction(){
 	
 	var content  = um.getContent();
 	var title = $('#input_note_title').val();
+	//console.log(model.currentNote);
+	if($.isEmptyObject(model.currentNote)){
+		return;
+	}
 	if(content==model.currentNote.body && title==model.currentNote.title){
 		//如果笔记内容没有被编辑，就不向服务器发送更新笔记的请求
 		return;
@@ -207,7 +270,13 @@ function savaNoteAction(){
 		$.post(url,data,function(result){
 			if(result.state==SUCCESS){
 				$('#sava_note').html('保存笔记').removeAttr('disabled');
-				listCurrentNotesAction();
+				//listCurrentNotesAction();
+				//更新model
+				var note = result.data;
+				model.currentNote=note;
+				model.notes[model.noteIndex].title=note.title;
+				paintNotes();
+				paintCurrentNote();
 			}else{
 				alert(result.message);
 			}
@@ -217,21 +286,11 @@ function savaNoteAction(){
 		
 	}
 }
-
+/*
+ * 添加笔记的请求
+ */
 function addNoteAction(){
-	//弹出添加笔记的对话框
-	var url = baseUrl+'/alert/alert_note.html';//对话框资源位置
-	$('#can').load(url,function(response,status,xhr){
-		if(status=='success'){
-			//对话框上的按钮绑定事件
-			$('#can .cancle,#can .close').click(function(){
-				$('#can').empty();
-			});
-			$('#can .sure').click(addNote);
-		}else{
-			$('#can').empty();
-		}
-	});
+	alertDialog('/alert/alert_note.html',addNote);
 }
 function addNote(){
 	//取得笔记名称
@@ -243,17 +302,152 @@ function addNote(){
 	var url = baseUrl+'/notebook/note/addNote.do';
 	$.post(url,data,function(result){
 		if(result.state==SUCCESS){
+			$('#can .close').click();
 			//刷新笔记列表
-			listCurrentNotesAction();
-			$('#can .cancle').click();
+			//listCurrentNotesAction();
+			var note = result.data;
+			model.currentNote=note;
+			model.noteIndex=0;
+			var ary = [{id:note.id,title:note.title}];
+			model.notes = ary.concat(model.notes);
+			paintNotes();
+			paintCurrentNote();
+			
 		}else{
+			//console.log(result.message);
 			alert(result.message);
 		}
 	});
 	
 }
 
+/*
+ * 封装弹出对话框的请求
+ */
+ function alertDialog(url,sure){
+ 	//var sourceurl = baseUrl+url+'?nocache='+new Date().getTime();//对话框资源位置
+ 	var sourceurl = baseUrl+url;
+	$('#can').load(sourceurl,function(response,status,xhr){
+		if(status=='success'){
+			//对话框上的按钮绑定事件
+			$('#can .cancle,#can .close').click(function(){
+				$('#can div').fadeOut('500',function(){
+					$('#can').empty();
+				});
+			});
+			$('#can .sure').click(sure);
+			$('#can div').fadeIn('1000');
+		}else{
+			$('#can').empty();
+		}
+		if(url=='/alert/alert_move.html'){
+			$('#can').find('h4').html('移动笔记:'+model.currentNote.title);
+			var notebooks = model.notebooks;
+			var list = $('#moveSelect').empty();
+			for(var i=0;i<notebooks.length;i++){
+				var notebook = notebooks[i];
+				list.append($('<option>').val(notebook.id).text(notebook.name));
+			}
+		}
+	});
+ }
 
+
+/*
+ * 删除笔记的请求处理
+ */
+ function deleteNoteAction(){
+ 	var note = model.currentNote;
+ 	var index = model.noteIndex;
+ 	var next = index;
+ 	var notes = model.notes;
+ 	var notesLength = notes.length;
+ 	var url = baseUrl+'/notebook/note/deleteNote.do?noteId='+note.id;
+ 	$('#notes').children('li').eq(index).slideUp('200',function(){
+	 	$.getJSON(url,function(result){
+	 		if(result.state==SUCCESS){
+			 	//console.log('hello');
+	 			//更新数据模型
+//	 			for(var i=index;i<notes.length-1;i++){
+//	 				notes[i]=notes[i+1];
+//	 			}
+//	 			notes.pop();
+				notes.splice(index,1);
+	 			paintNotes();
+	 			paintCurrentNote();
+	 			if(index==notesLength-1){
+	 				next -= 1;
+	 			}
+	 			$('#notes').children('li').find('a').eq(next).click();
+	 		}else{
+	 			alert(result.message);
+	 		}
+	 	});
+ 	});
+ 	return false;
+ }
+ 
+ /*
+  * 添加笔记本的请求
+  */
+function addNotebookAction(){
+	var userId = model.userId;
+	var dialogUrl = '/alert/alert_notebook.html';
+	alertDialog(dialogUrl,function(){
+		var notebookName = $('#input_notebook').val();
+		var data = {'notebookName':notebookName,'userId':userId};
+		var url = baseUrl+'/notebook/addNotebook.do';
+		//console.log(data);
+		$.post(url,data,function(result){
+			if(result.state==SUCCESS){
+				$('#can .close').click();
+				var notebook = result.data;
+				model.currentNotebook = notebook;
+				model.notebookIndex = 0;
+				var ary = [notebook];
+				model.notebooks= ary.concat(model.notebooks);
+				paintNotebooks();
+				
+			}else{
+				alert(result.message);
+			}
+		});
+	});
+}
+
+function moveNoteAction(){
+	var sourceUrl = '/alert/alert_move.html';
+	alertDialog(sourceUrl,function(){
+		var noteId = model.currentNote.id;
+		var index = model.noteIndex;
+		var toNotebookId = $('#can select').val();
+		var notesLength = model.notes.length;
+		//if()
+		var data = {'noteId':noteId,'toNotebookId':toNotebookId};
+		var url = baseUrl+'/notebook/note/moveNote.do';
+		$.post(url,data,function(result){
+			$('#can').find('.close').click();
+			$('#notes').children('li').eq(index).slideUp('200',function(){
+				if(result.state==SUCCESS){
+					model.notes.splice(index,1);
+					paintNotes();
+		 			if(model.notes.length==0){
+		 				$('#input_note_title').val('');
+		 				um.setContent('');
+		 				model.currentNote={};
+		 			}
+		 			if(index==notesLength-1){
+		 				index -= 1;
+		 			}
+		 			$('#notes').children('li').find('a').eq(index).click();
+				}else{
+					alert(result.message);
+				}
+			});
+		});
+	});
+	return false;
+}
 
 
 

@@ -18,8 +18,9 @@
 		<!-- Ueditor编辑器CSS -->
 		<link href="styles/umeditor.min.css" type="text/css" rel="stylesheet">
 		<script type="text/javascript" src="scripts/jquery.min.js"></script>
-		<script type="text/javascript" src="scripts/cookie_util.js"></script>
+		<script type="text/javascript" src="scripts/jquery.cookie.js"></script>
 		<script type="text/javascript" src="scripts/const.js"></script>
+		<script type="text/javascript" src="scripts/cookie_util.js"></script>
 		<script type="text/javascript" src="scripts/edit.js"></script>
     </head>
     <body class="animated fadeIn">
@@ -305,13 +306,6 @@
 		<script type="text/javascript" src="scripts/ue/lang/zh-cn.js"></script>
 		
 		<script type="text/javascript">
-			//重写JS原生alert函数
-				window.alert=function(e){
-					$('#can').load('./alert/alert_error.html',function(){
-						$('#error_info').text(' '+e);
-						$('.opacity_bg').show();
-					});
-				}
 			//实例化Ueditor编辑器
 			var um = UM.getEditor('myEditor');
 		</script>

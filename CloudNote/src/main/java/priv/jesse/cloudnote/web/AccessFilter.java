@@ -85,8 +85,15 @@ public class AccessFilter implements Filter {
 		}else{
 			//检查token是否合格
 			String value = token.getValue();
+			
+			//System.out.println(value);
 			String[] data = value.split("\\|");
-			//System.out.println(Arrays.toString(data));
+			if(data.length!=2){
+				String path = request.getContextPath();
+				String login = path+"/login.html";
+				response.sendRedirect(login);
+				return;
+			}
 			String time = data[0];
 			String md5 = data[1];
 			String userAgent = request.getHeader("User-Agent");

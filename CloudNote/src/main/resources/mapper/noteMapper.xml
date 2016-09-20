@@ -11,6 +11,8 @@
 			cn_note
 		WHERE
 			cn_notebook_id = #{value}
+			AND
+			cn_note_type_id='1'
 		ORDER BY
 			cn_note_last_modify_time DESC
 	</select>
@@ -73,7 +75,8 @@
 			cn_note_id = #{id}
 	</update>
 	
-	<delete id="removeNote" parameterType="note">
+	<!-- 从数据库中根据id删除某个笔记 -->
+	<delete id="removeNote" parameterType="string">
 			DELETE FROM cn_note WHERE cn_note_id = #{id}
 	</delete>
 </mapper>

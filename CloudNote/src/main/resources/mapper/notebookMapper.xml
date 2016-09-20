@@ -5,10 +5,65 @@
 	<select id="findNotebookByUserId" parameterType="string" resultType="map">
 		SELECT 
 			cn_notebook_id as id,
-			cn_notebook_name as name 
+			cn_notebook_name as name,
+			cn_notebook_createtime 
 		FROM 
 			cn_notebook 
 		WHERE 
 			cn_user_id=#{value}
+			and
+			cn_notebook_type_id='1'
+		ORDER BY
+			cn_notebook_createtime DESC
 	</select>
+	
+	<select id="findNotebookById" parameterType="string" resultType="notebook">
+		SELECT 
+			cn_notebook_id as notebookId,
+			cn_user_id as userId,
+			cn_notebook_type_id as typeId,
+			cn_notebook_name name,
+			cn_notebook_desc desc,
+			cn_notebook_createtime as createTime
+		FROM 
+			cn_notebook 
+		WHERE 
+			cn_notebook_id=#{value}
+			and
+			cn_notebook_type_id='1'
+		ORDER BY
+			cn_notebook_createtime DESC
+	</select>
+	
+	<insert id="saveNotebook" parameterType="notebook">
+		INSERT INTO cn_notebook (
+			cn_notebook_id,
+			cn_user_id,
+			cn_notebook_type_id,
+			cn_notebook_name,
+			cn_notebook_desc,
+			cn_notebook_createtime
+		)
+		VALUES(
+			#{id}, 
+			#{userId}, 
+			#{typeId}, 
+			#{name}, 
+			#{desc},
+			#{createTime}
+		)
+	</insert>
+	
+	<update id="updateNotebook" parameterType="string">
+		UPDATE 
+			cn_notebook 
+		SET
+			cn_user_id=#{userId}, 
+			cn_notebook_type_id=#{typeId},
+			cn_notebook_name=#{name},
+			cn_notebook_desc=#{desc},
+			cn_notebook_createtime=#{createTime}
+		WHERE
+			cn_notebook_id=#{id}
+	</update>
 </mapper>

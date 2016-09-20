@@ -9,6 +9,22 @@ $(function(){
 	$('#login').click(loginAction);
 	//为regist按钮绑定事件
 	$('#regist_button').click(registAction);
+	$('#codeImg').click(function(){
+		$(this).attr('src','account/code.do?'+new Date().getTime());
+	});
+	
+	$('#code').blur(function(){
+		var code = $(this).val();
+		var url = baseUrl+'/account/checkCode.do?code='+code;
+		$.getJSON(url,function(result){
+			if(result.state==SUCCESS){
+				console.log(code);
+				$('#code').removeClass('error');
+			}else{
+				$('#code').addClass('error');
+			}
+		});
+	});
 });
 // 移到const.js中了
 // var SUCCESS = 0;
@@ -23,6 +39,7 @@ function loginAction(){
 	//失败则显示错误消息
 	var name=$('#count').val();
 	var password = $('#password').val();
+	var code = $('#code').val();
 //	console.log(name+":"+password);
 	var reg= /^\w{3,10}/;
 	$('#count').removeClass('error');
@@ -36,11 +53,15 @@ function loginAction(){
 		$('#password').addClass('error');
 		pass = false;
 	}
+	if(!code){
+		$('#code').addClass('error');
+		pass = false;
+	}
 	if(!pass){
 		return false;
 	}
 	
-	var data = {'name':name,'password':password};
+	var data = {'name':name,'password':password,'code':code};
 	console.log(data);
 	
 	$.ajax({
@@ -53,9 +74,12 @@ function loginAction(){
 			if(result.state==SUCCESS){
 				//登录成功将用户信息保存到cookie中
 				var user = result.data;
-				setCookie('userId',user.id);
-				setCookie('userName',user.name);
-				setCookie('userNick',user.nick);
+//				$.cookie('userId', user.id, {expires:7, path:'/', secure: true});
+//				$.cookie('userName', user.name, {expires:7, path:'/', secure: true});
+//				$.cookie('userNick', user.nick, {expires:7, path:'/', secure: true});
+				setCookie('userId',user.id,7);
+				setCookie('userName',user.name,7);
+				setCookie('userNick',user.nick,7);
 				window.location='edit.html';
 			}else{
 				alert(result.message);

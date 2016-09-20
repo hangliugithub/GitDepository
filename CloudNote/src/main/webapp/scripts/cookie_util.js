@@ -1,21 +1,21 @@
 
 //获得coolie 的值
 
-function cookie(name){    
-
-   var cookieArray=document.cookie.split("; "); //得到分割的cookie名值对    
-
-   for (var i=0;i<cookieArray.length;i++){    
-
-      var arr=cookieArray[i].split("=");       //将名和值分开    
-
-      if(arr[0]==name)return unescape(arr[1]); //如果是指定的cookie，则返回它的值    
-
-   } 
-
-   return ""; 
-
-} 
+//function cookie(name){    
+//
+//   var cookieArray=document.cookie.split("; "); //得到分割的cookie名值对    
+//
+//   for (var i=0;i<cookieArray.length;i++){    
+//
+//      var arr=cookieArray[i].split("=");       //将名和值分开    
+//
+//      if(arr[0]==name)return unescape(arr[1]); //如果是指定的cookie，则返回它的值    
+//
+//   } 
+//
+//   return ""; 
+//
+//} 
 
  
 
@@ -67,18 +67,13 @@ function addCookie(objName,objValue,objHours){      //添加cookie
 
  
 
-function setCookie(name,value)//两个参数，一个是cookie的名子，一个是值
-
-{
-
-    var Days = 30; //此 cookie 将被保存 30 天
-
-    var exp = new Date();    //new Date("December 31, 9998");
-
-    exp.setTime(exp.getTime() + Days*24*60*60*1000);
-
-    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
-
+var Days = 30; //此 cookie 将被保存 30 天
+//设置cookie
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 
 function getCookie(name)//取cookies函数        
@@ -93,13 +88,8 @@ function getCookie(name)//取cookies函数
 
 }
 
-function delCookie(name)//删除cookie
-{
-    var exp = new Date();
-    exp.setTime(exp.getTime() - 1);
-    var cval=getCookie(name);
-    if(cval!=null) {
-    	document.cookie= name + "="+cval+";expires="+exp.toGMTString();
-    }
-}
+//清除cookie  
+function delCookie(name) {  
+    setCookie(name, "null", -1);  
+}  
 

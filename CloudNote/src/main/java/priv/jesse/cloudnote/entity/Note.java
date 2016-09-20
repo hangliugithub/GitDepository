@@ -10,12 +10,12 @@ public class Note implements Serializable {
 	
 	private static final long serialVersionUID = 7935606226057037543L;
 
-	public static final String 	NORMAL_STATUS = "1";
-	public static final String 	DELETE_STATUS = "2";
-	public static final String 	DISABLE_STATUS = "3";
-	
 	public static final String 	NORMAL_TYPE = "1";
-	public static final String 	FAVORITE_TYPE = "2";
+	public static final String 	DELETE_TYPE = "2";
+	public static final String 	DISABLE_TYPE = "3";
+	
+	public static final String 	NORMAL_STATUS = "1";
+	public static final String 	FAVORITE_STATUS = "2";
 	
 	private String id;
 	private String notebookId;

@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import priv.jesse.cloudnote.entity.Note;
+import priv.jesse.cloudnote.entity.Notebook;
 import priv.jesse.cloudnote.service.NotebookService;
 
 public class NotebookServiceImplTest {
@@ -46,6 +47,13 @@ public class NotebookServiceImplTest {
 		String body = "asdfgjklkdls";
 		Note note = service.updateNoteBody(noteId, title, body);
 		System.out.println(note);
+	}
+	
+	@Test
+	public void testAddNotebook(){
+		NotebookService service = (NotebookService) ac.getBean("notebookService");
+		Notebook notebook = service.addNotebook("bing¡¯s notebook", "39295a3d-cc9b-42b4-b206-a2e7fab7e77c");
+		System.out.println(notebook);
 	}
 	
 }

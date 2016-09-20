@@ -26,7 +26,7 @@
             cn_user_id=#{id}
     </select>
     
-    <select id="findUserByName" parameterType="String" resultType="user">
+    <select id="findUserByName" parameterType="string" resultType="user">
     	SELECT
     		cn_user_id as id,
             cn_user_name as name,
@@ -37,6 +37,17 @@
 			cn_user
 		WHERE
 			cn_user_name=#{name}
-    </select>   
+    </select>  
+    
+    <update id="updateUser" parameterType='user'>
+    	update 
+    		cn_user
+    	set
+    		cn_user_name = #{name},
+    		cn_user_password = #{password},
+    		cn_user_nick = #{nick}
+    	where
+    		cn_user_id = #{id}
+    </update> 
  	
  </mapper>

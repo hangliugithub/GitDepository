@@ -1,5 +1,6 @@
 package priv.jesse.cloudnote.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import priv.jesse.cloudnote.dao.NoteDAO;
 import priv.jesse.cloudnote.dao.NotebookDAO;
 import priv.jesse.cloudnote.entity.Note;
+import priv.jesse.cloudnote.entity.Notebook;
 @Service("notebookService")
 public class NotebookServiceImpl implements NotebookService {
 	
@@ -85,6 +87,58 @@ public class NotebookServiceImpl implements NotebookService {
 		note.setLastModifyTime(time);
 		noteDAO.saveNote(note);
 		//调用DAO保存note
+		return note;
+	}
+
+	public Note deleteNote(String noteId) {
+		if(noteId==null || noteId.trim().isEmpty()){
+			throw new ServiceException("noteId不能为空！");
+		}
+		Note note = noteDAO.findNoteById(noteId);
+		if(note==null){
+			throw new ServiceException("ID不存在！");
+		}
+		if(Note.NORMAL_TYPE.equals(note.getTypeId())){
+			note.setTypeId(Note.DELETE_TYPE);
+			note.setLastModifyTime(System.currentTimeMillis());
+			noteDAO.updateNote(note);
+			return note;
+		}
+		throw new ServiceException("只能删除正常笔记！");
+	}
+
+	public Notebook addNotebook(String notebookName, String userId) {
+		if(notebookName==null || notebookName.trim().isEmpty()){
+			throw new ServiceException("笔记本名字不能为空！");
+		}
+		if(userId == null || userId.trim().isEmpty()){
+			throw new ServiceException("notebookId不能为空");
+		}
+		Notebook notebook = new Notebook();
+		notebook.setId(UUID.randomUUID().toString());
+		notebook.setName(notebookName);
+		notebook.setUserId(userId);
+		notebook.setTypeId("1");
+		notebook.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		notebookDAO.saveNotebook(notebook);
+		return notebook;
+	}
+
+	public Note moveNote(String noteId, String toNotebookId) {
+		if(noteId==null || noteId.trim().isEmpty()){
+			throw new ServiceException("noteId不能为空！");
+		}
+		if(toNotebookId == null || toNotebookId.trim().isEmpty()){
+			throw new ServiceException("notebookId不能为空");
+		}
+		Note note = noteDAO.findNoteById(noteId);
+		if(toNotebookId.equals(note.getNotebookId())){
+			
+		}
+		
+		note.setNotebookId(toNotebookId);
+		note.setLastModifyTime(System.currentTimeMillis());
+		noteDAO.updateNote(note);
 		return note;
 	}
 
