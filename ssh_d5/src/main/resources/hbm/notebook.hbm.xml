@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="priv.jesse.cloudnote.entity.Notebook" table="cn_notebook">
+		<!-- 定义主键映射 -->
+		<id name="id" column="cn_notebook_id" type="string"></id>
+		<!-- 定义非主键映射 -->
+		<property name="userId" column="cn_user_id" type="string"></property>
+		<property name="typeId" column="cn_notebook_type_id" type="string"></property>
+		<property name="name" column="cn_notebook_name" type="string"></property>
+		<property name="desc" column="cn_notebook_desc" type="string"></property>
+		<property name="createTime" column="cn_notebook_createtime" type="java.sql.Timestamp"></property>
+	</class>
+	
+</hibernate-mapping>

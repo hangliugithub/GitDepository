@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="web" extends="struts-default" namespace="/demo">
+		<action name="hello" class="demoAction"><!-- bean id -->
+			<result name="success">/WEB-INF/msg.jsp</result>
+		</action>
+		
+		<!-- 重定向 -->
+		<action name="reHello1">
+			<result type="redirectAction">
+				hello
+			</result>
+		</action>
+		<action name="reHello2">
+			<result type="redirectAction">
+				hello
+			</result>
+		</action>
+		
+		<action name="test">
+			<result type="redirect">
+				https://www.baidu.com
+			</result>
+		</action>
+		
+		<action name="sw" class="switchAction" method="doSwitch">
+			<result name="1">/WEB-INF/msg.jsp</result>
+			<result name="2" type="redirect">http://doc.tedu.cn</result>
+			<result name="3" type="redirect">http://www.tmooc.cn</result>
+			<result name="4" type="redirectAction">hello</result>
+		</action>
+		<action name="image" class="imageAction" method="execute">
+			<result name="success" type="stream">
+				<param name="contentType">image/png</param>
+				<param name="inputName">image</param>
+			</result>
+		</action>
+		<action name="card" class="imageAction" method="card">
+			<result name="success" type="stream">
+				<param name="contentType">image/jpg</param>
+				<param name="inputName">image</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- 将JsonAction的全部属性序列化为一个json对象作为返回值 -->
+	<package name="json" extends="json-default" namespace="/json">
+		<action name="hello" class="jsonAction">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 自定义要序列化的属性 -->
+		<action name="message" class="jsonAction">
+			<result type="json">
+				<param name="root">message</param>
+			</result>
+		</action>
+		<action name="login" class="accountAction">
+			<result name="success" type="json">
+				<param name="root">data</param>
+			</result>
+			<result name="error" type="json">
+				<param name="root">data</param>
+			</result>
+		</action>
+	</package>
+	
+</struts>

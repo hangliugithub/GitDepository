@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 
+		extends="struts-default"继承struts的默认配置，来自struts-default.xml
+		namespace="demo" 用于定义第一层请求路径
+	 -->
+	<package name="web" extends="struts-default" namespace="/demo">
+		<action name="hello" class="priv.jesse.web.HelloAction" method="execute">
+			<result name="success">/WEB-INF/ok.jsp</result>
+		</action>
+		<!-- 显示登录页面 -->
+		<action name="login-form">
+			<result>/WEB-INF/login.jsp</result>
+		</action>
+		<!-- 处理登录请求 -->
+		<action name="login" class="priv.jesse.web.LoginAction" >
+			<result name="success">/WEB-INF/msg.jsp</result>
+			<result name="error">/WEB-INF/login.jsp</result>
+		</action>
+		
+		<action name="register-form">
+			<result>/WEB-INF/register.jsp</result>
+		</action>
+		<action name="register" class="priv.jesse.web.RegisterAction">
+			<result name="success">/WEB-INF/msg.jsp</result>
+		</action>
+		<action name="demo" class="priv.jesse.web.DemoAction">
+			<result name="success">/WEB-INF/msg.jsp</result>
+		</action>
+		<action name="context" class="priv.jesse.web.ContextAction">
+			<result name="success">/WEB-INF/context.jsp</result>
+		</action>
+	</package>
+</struts>

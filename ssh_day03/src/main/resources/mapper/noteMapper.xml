@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="priv.jesse.cloudnote.dao.NoteDAO">
+	
+	<!-- 通过notebook的id查找该笔记本中的所有笔记 -->
+	<select id="findNoteByNotebookId" parameterType="string" resultType="map">
+		SELECT
+			cn_note_id as id,
+			cn_note_title as title
+		FROM
+			cn_note
+		WHERE
+			cn_notebook_id = #{value}
+			AND
+			cn_note_type_id='1'
+		ORDER BY
+			cn_note_last_modify_time DESC
+	</select>
+	
+	<!-- 通过noteid 查找一个笔记 -->
+	<select id="findNoteById" parameterType="string" resultType="note">
+		SELECT
+			cn_note_id AS id,
+			cn_notebook_id AS notebookId,
+			cn_user_id AS userId,
+			cn_note_status_id AS statusId,
+			cn_note_type_id AS typeId,
+			cn_note_title AS title,
+			cn_note_body AS body,
+			cn_note_create_time AS createTime,
+			cn_note_last_modify_time AS lastModifyTime
+		FROM
+			cn_note
+		WHERE
+			cn_note_id = #{value}
+	</select>
+	<insert id="saveNote" parameterType="note">
+		INSERT INTO cn_note (
+			cn_note_id,
+			cn_notebook_id,
+			cn_user_id,
+			cn_note_status_id,
+			cn_note_type_id,
+			cn_note_title,
+			cn_note_body,
+			cn_note_create_time,
+			cn_note_last_modify_time
+		)
+		VALUES
+			(
+				#{id}, 
+				#{notebookId}, 
+				#{userId}, 
+				#{statusId},
+				#{typeId}, 
+				#{title}, 
+				#{body},
+				#{createTime}, 
+				#{lastModifyTime}
+			)
+	</insert>	
+	<update id="updateNote" parameterType="note">
+		UPDATE
+			cn_note
+		SET 
+			cn_notebook_id = #{notebookId},
+			cn_user_id = #{userId}, 
+			cn_note_status_id = #{statusId},
+			cn_note_type_id = #{typeId},
+			cn_note_title = #{title},
+			cn_note_body = #{body},
+			cn_note_create_time = #{createTime},
+			cn_note_last_modify_time = #{lastModifyTime}
+		WHERE
+			cn_note_id = #{id}
+	</update>
+	
+	<!-- 从数据库中根据id删除某个笔记 -->
+	<delete id="removeNote" parameterType="string">
+			DELETE FROM cn_note WHERE cn_note_id = #{id}
+	</delete>
+</mapper>
+
+
+
+
