@@ -221,7 +221,7 @@ function paintNotes(){
 			}
 		}
 	}
-	ul.children('li').fadeIn('200');
+	ul.children('li').slideDown('slow');
 	//ul.find('a').eq(0).click();
 }
 

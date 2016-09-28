@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import priv.jesse.cloudnote.dao.UserDAO;
 import priv.jesse.cloudnote.entity.User;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Transactional(readOnly=true)
 	public User login(String name, String password) throws NameOrPasswordException {
 		// 入口参数检查
 		if (name == null || name.trim().isEmpty()) {
@@ -40,6 +42,7 @@ public class UserServiceImpl implements UserService {
 		throw new NameOrPasswordException("密码错误！");
 	}
 
+	@Transactional
 	public User regist(String name, String password, String nick) throws UserExistException {
 		String rule = "^\\w{3,10}";
 		//入口参数检查
@@ -71,6 +74,48 @@ public class UserServiceImpl implements UserService {
 		String salPwd = Md5.saltMd5(password);
 		user = new User(id, name, salPwd, "", nick);
 		userDAO.saveUser(user);
+		return user;
+	}
+
+	@Transactional(readOnly=true)
+	public boolean checkPassword(String userId, String password) throws NameOrPasswordException {
+		// 入口参数检查
+		if (userId == null || userId.trim().isEmpty()) {
+			throw new NameOrPasswordException("用户ID不能为空！");
+		}
+		if (password == null || password.trim().isEmpty()) {
+			throw new NameOrPasswordException("密码不能为空！");
+		}
+		
+		User user = userDAO.findUserById(userId);
+		if(user==null){
+			throw new NameOrPasswordException("用户不存在！");
+		}
+		if(!user.getPassword().equals(Md5.saltMd5(password))){
+			return false;
+		}
+		return true;
+	}
+
+	@Transactional
+	public User changePassword(String userId, String password, String newPassword) throws ServiceException {
+		//System.out.println(userId+","+password);
+		// 入口参数检查
+		if (userId == null || userId.trim().isEmpty()) {
+			throw new NameOrPasswordException("用户ID不能为空！");
+		}
+		User user = userDAO.findUserById(userId);
+		if(user==null){
+			throw new NameOrPasswordException("用户不存在！");
+		}
+		if (!user.getPassword().equals(Md5.saltMd5(password))) {
+			throw new NameOrPasswordException("原始密码不正确！");
+		}
+		if(!newPassword.matches("^.{3,10}$")){
+			throw new NameOrPasswordException("新密码不合格！");
+		}
+		user.setPassword(Md5.saltMd5(newPassword));
+		userDAO.updateUser(user);
 		return user;
 	}
 

@@ -23,4 +23,9 @@ public interface UserService extends Serializable{
 	 * @throws UserExistException 用户已存在
 	 */
 	User regist(String name, String password, String nick) throws UserExistException;
+	
+	boolean checkPassword(String userId,String password) throws NameOrPasswordException;
+	
+	User changePassword(String userId,String password,String newPassword) throws NameOrPasswordException,ServiceException;
+	
 }

@@ -25,6 +25,15 @@ $(function(){
 			}
 		});
 	});
+	
+	//修改密码页面
+	//关闭按钮事件
+	$('#back').click(function(){
+		window.history.back();
+	});
+	//确定按钮事件
+	$('#changePassword').click(changePasswordAction);
+	$('#last_password').blur(checkPwdAction);
 });
 // 移到const.js中了
 // var SUCCESS = 0;
@@ -150,6 +159,69 @@ function registAction(){
 		}
 	});
 }
+
+//检查密码的请求
+function checkPwdAction(){
+	var lastPwd = $('#last_password').val();
+	var reg = /^\w{3,10}$/;
+	$('#last_password').removeClass('error').next().hide();
+	if(!lastPwd || !reg.test(lastPwd)){
+		$('#warning_1 span').html('<sub>原始密码错误</sub>').parent().show();
+		$('#last_password').addClass('error').focus();
+		return;
+	}
+	var url = baseUrl+'/account/checkPwd.do';
+	$.post(url,{'userId':getCookie('userId'),'lastPwd':lastPwd},function(result){
+		if(result.state==ERROR){
+			$('#warning_1 span').html('<sub>原始密码错误</sub>').parent().show();
+			$('#last_password').addClass('error').focus();
+		}
+	});
+}
+
+//修改密码请求
+function changePasswordAction(){
+	var lastPwd = $('#last_password').val();
+	var newPwd = $('#new_password').val();
+	var finalPwd = $('#final_password').val();
+	var userId = getCookie('userId');
+	var reg = /^\w{3,10}$/;
+	$('input').removeClass('error');
+	$('.warning').hide();
+	if(!userId){
+		alert('用户未登录！');
+		return;
+	}
+	if(!lastPwd || !reg.test(lastPwd)){
+		$('#warning_1 span').html('<sub>原始密码错误</sub>').parent().show();
+		$('#last_password').addClass('error').focus();
+		return;
+	}
+	if(!newPwd || !reg.test(newPwd)){
+		$('#warning_2 span').html('<sub>长度3~10位</sub>').parent().show();
+		$('#new_password').addClass('error').focus();
+		return;
+	}
+	if(finalPwd!=newPwd){
+		$('#warning_3 span').html('<sub>密码不一致</sub>').parent().show();
+		$('#final_password').addClass('error').focus();
+		return;
+	}
+	
+	var url = baseUrl+'/account/changePwd.do';
+	var data = {'userId':userId,'lastPwd':lastPwd,'newPwd':newPwd};
+	$.post(url,data,function(result){
+		if(result.state==SUCCESS){
+			alert('修改成功！');
+			window.location.href=baseUrl+'/edit.html';
+		}else{
+			alert(result.message);
+		}
+	});
+	
+}
+
+
 
 
 

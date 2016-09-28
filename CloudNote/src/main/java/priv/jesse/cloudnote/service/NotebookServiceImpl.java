@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import priv.jesse.cloudnote.dao.NoteDAO;
 import priv.jesse.cloudnote.dao.NotebookDAO;
@@ -25,6 +26,7 @@ public class NotebookServiceImpl implements NotebookService {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Transactional(readOnly=true)
 	public List<Map<String, Object>> listNotebooks(String userId) {
 		if(userId==null || userId.trim().isEmpty()){
 			throw new ServiceException("userId不能为空！");
@@ -32,6 +34,7 @@ public class NotebookServiceImpl implements NotebookService {
 		return notebookDAO.findNotebookByUserId(userId);
 	}
 
+	@Transactional(readOnly=true)
 	public List<Map<String, Object>> listNotes(String notebookId) {
 		if(notebookId==null || notebookId.trim().isEmpty()){
 			throw new ServiceException("notebookId不能为空！");
@@ -39,6 +42,7 @@ public class NotebookServiceImpl implements NotebookService {
 		return noteDAO.findNoteByNotebookId(notebookId);
 	}
 
+	@Transactional(readOnly=true)
 	public Note loadNote(String noteId) {
 		if(noteId==null || noteId.trim().isEmpty()){
 			throw new ServiceException("noteId不能为空");
@@ -46,6 +50,7 @@ public class NotebookServiceImpl implements NotebookService {
 		return noteDAO.findNoteById(noteId);
 	}
 
+	@Transactional
 	public Note updateNoteBody(String noteId, String title, String body) {
 		if(noteId==null || noteId.trim().isEmpty()){
 			throw new ServiceException("noteId不能为空");
@@ -66,6 +71,7 @@ public class NotebookServiceImpl implements NotebookService {
 		return note;
 	}
 
+	@Transactional
 	public Note addNote(String title, String notebookId,String userId) {
 		if(title==null || title.trim().isEmpty()){
 			throw new ServiceException("标题不能为空");
@@ -90,6 +96,7 @@ public class NotebookServiceImpl implements NotebookService {
 		return note;
 	}
 
+	@Transactional
 	public Note deleteNote(String noteId) {
 		if(noteId==null || noteId.trim().isEmpty()){
 			throw new ServiceException("noteId不能为空！");
@@ -107,6 +114,7 @@ public class NotebookServiceImpl implements NotebookService {
 		throw new ServiceException("只能删除正常笔记！");
 	}
 
+	@Transactional
 	public Notebook addNotebook(String notebookName, String userId) {
 		if(notebookName==null || notebookName.trim().isEmpty()){
 			throw new ServiceException("笔记本名字不能为空！");
@@ -124,6 +132,7 @@ public class NotebookServiceImpl implements NotebookService {
 		return notebook;
 	}
 
+	@Transactional
 	public Note moveNote(String noteId, String toNotebookId) {
 		if(noteId==null || noteId.trim().isEmpty()){
 			throw new ServiceException("noteId不能为空！");

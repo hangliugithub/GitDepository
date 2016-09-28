@@ -23,7 +23,7 @@ import priv.jesse.cloudnote.entity.User;
 import priv.jesse.cloudnote.service.UserService;
 import priv.jesse.cloudnote.util.Md5;
 
-@Controller
+//@Controller
 @RequestMapping("/account")
 public class AccountController {
 
