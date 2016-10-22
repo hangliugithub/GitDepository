@@ -27,8 +27,8 @@ $(function(){
 	});
 	
 	//修改密码页面
-	//关闭按钮事件
-	$('#back').click(function(){
+	//关闭按钮事件1
+	$('.changepwd').find('#back').click(function(){
 		window.history.back();
 	});
 	//确定按钮事件
@@ -151,7 +151,8 @@ function registAction(){
 				alert("恭喜你，注册成功！");
 				$('#count').val(result.data.name);
 				$('#password').focus();
-				$('#back').click();
+//				$('#back').click();
+				
 			}else{
 				//alert(result.message);
 				$('#regist_username').addClass('error').next().show().children().eq(0).html(result.message);

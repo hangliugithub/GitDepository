@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import priv.jess.cloudnote.aop.DemoBean;
+import priv.jesse.cloudnote.aop.DemoBean;
 
 public class DemoBeanTest {
 

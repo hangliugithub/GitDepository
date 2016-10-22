@@ -1,8 +1,8 @@
-package priv.jess.cloudnote.aop;
+package priv.jesse.cloudnote.aop;
 
 import org.springframework.stereotype.Component;
 
-@Component("demoBean")
+//@Component("demoBean")
 public class DemoBean {
 
 	public DemoBean() {

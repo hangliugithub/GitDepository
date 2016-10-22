@@ -15,13 +15,11 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
-	<!-- resource/spring-aop.xml -->
 	<!-- 配置组件扫描 -->
-	<context:component-scan base-package="priv.jesse.cloudnote.aop" />
-	<!-- AOP 注解支持，用于支持@Aspect 等注解 -->
-	<!--  proxy-target-class="true"强制使用cglib代理-->
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	
+	<context:component-scan base-package="com.cpinfo.hl7.web" />
+	<!-- 配置mvc注解扫描(@RequestMapping) -->
+	<mvc:annotation-driven/>
+
 </beans>
 
 

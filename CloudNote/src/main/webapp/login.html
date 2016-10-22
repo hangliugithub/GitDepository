@@ -94,7 +94,19 @@
 							}
 							window.onload=function(){
 								var t =setTimeout("get('zc').style.visibility='visible'",800);
-								
+								get('final_password').onblur=function(){
+									var npassword=get('regist_password').value;
+									var fpassword=get('final_password').value;
+									if(npassword!=fpassword){
+										get('warning_3').style.display='block';
+									}
+								}
+								get('regist_password').onblur=function(){
+									var npassword=get('regist_password').value.length;
+									if(npassword<6&&npassword>0){
+										get('warning_2').style.display='block';
+									}
+								}
 								get('regist_password').onfocus=function(){
 									get('warning_2').style.display='none';
 								}

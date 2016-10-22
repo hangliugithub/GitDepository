@@ -14,7 +14,7 @@ import priv.jesse.cloudnote.dao.UserDAO;
 import priv.jesse.cloudnote.entity.User;
 import priv.jesse.cloudnote.util.Md5;
 
-@Service("demoService")
+//@Service("demoService")
 public class DemoServiceImpl implements DemoService {
 
 	@Resource

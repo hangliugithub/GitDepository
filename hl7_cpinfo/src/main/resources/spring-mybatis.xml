@@ -15,13 +15,38 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
-	<!-- resource/spring-aop.xml -->
-	<!-- 配置组件扫描 -->
-	<context:component-scan base-package="priv.jesse.cloudnote.aop" />
-	<!-- AOP 注解支持，用于支持@Aspect 等注解 -->
-	<!--  proxy-target-class="true"强制使用cglib代理-->
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	
+	<!-- spring-mybatis.xml -->
+    <!-- 配置数据源、连接池 -->
+    <!-- Mybatis 的 sqlSessionFactory-->
+    <!-- Mapper 接口自动扫描 -->
+
+    <!-- 读取conf.properites -->
+	<util:properties id="config" location="classpath:dbconf.properties" />
+	<!-- 配置DataSource数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="#{config.driverClassName}" />
+		<property name="url" value="#{config.url}" />
+		<property name="username" value="#{config.username}" />
+		<property name="password" value="#{config.password}" />
+		<property name="maxActive" value="#{config.maxActive}" />
+		<property name="maxWait" value="#{config.maxWait}" />
+	</bean>
+
+    <!-- sessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- mabatis配置文件 -->
+		<!-- <property name="configLocation" value="classpath:mybatisConf.xml"/> -->
+		<!-- mapper映射文件 -->
+        <property name="mapperLocations" value="classpath*:mapper/*.xml" />
+    </bean>
+
+    <!-- 配置Mapper接口扫描 -->
+    <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage"  value="com.cpinfo.hl7.dao" />
+    </bean>
+
 </beans>
 
 

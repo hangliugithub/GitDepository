@@ -1,4 +1,4 @@
-package priv.jess.cloudnote.aop;
+package priv.jesse.cloudnote.aop;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
