@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.cpinfo.fhirserver.dao.ConditionDao">
+	<!-- 新增 -->
+	<insert id="creat" parameterType="map">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			select condition_id_seq.nextval as id FROM dual
+		</selectKey>
+		insert into condition
+		(
+			uuid,
+			id,
+			version,
+			text,
+			patientid,
+			encounterid,
+			asserterid,
+			code,
+			clinicalstatus,
+			verificationstatus,
+			onset
+		)
+		values
+		(
+			#{uuid},
+			${id},
+			#{version},
+			#{text},
+			#{patientid},
+			#{encounterid},
+			#{asserterid},
+			#{code},
+			#{clinicalstatus},
+			#{verificationstatus},
+			#{onset}
+			
+		)
+	</insert>
+	
+	<!-- 更新信息 -->
+	<update id="setActive" parameterType="string">
+		<!--将该id对应的记录的active改为1 -->
+		update condition set active='1' where id=#{id}
+	</update>
+	<insert id="update" parameterType="map">
+		insert into condition
+		(
+			uuid,
+			id,
+			version,
+			text,
+			patientid,
+			encounterid,
+			asserterid,
+			code,
+			clinicalstatus,
+			verificationstatus,
+			onset
+		)
+		values
+		(
+			#{uuid},
+			#{id},
+			#{version},
+			#{text},
+			#{patientid},
+			#{encounterid},
+			#{asserterid},
+			#{code},
+			#{clinicalstatus},
+			#{verificationstatus},
+			#{onset}
+		)
+	</insert>
+	
+	<!-- 删除 -->
+	<update id="delById" parameterType="string">
+		update condition
+		set deleted='1'
+		where id=#{value}
+	</update>
+	<!-- 通过id查找-->
+	<select id="findById" parameterType="String" resultType="map">
+		select * from condition
+		where id=#{value} and deleted = '0' and active='0'
+	</select>
+	<!-- 查找所有历史版本 -->
+	<select id="findHisById" parameterType="String" resultType="map">
+		select * from condition
+		where id=#{value} and deleted = '0'
+		order by version desc
+	</select>
+	
+	
+	<!-- 通过患者id查找 -->
+	<select id="findByPatientId" parameterType="string" resultType="map">
+		select * from condition
+		where patientid like '%${value}%' and deleted = '0' and active='0'
+		order by version desc
+	</select>
+	<!-- 通过医生id查找查找 -->
+	<select id="findByAsserterId" parameterType="string" resultType="map">
+		select * from condition
+		where asserterid like '%${value}%' and deleted = '0' and active='0'
+		order by version desc
+	</select>
+	
+	<!-- 通过诊断名称查找 -->
+	<select id="findByName" parameterType="string" resultType="map">
+		select * from condition
+		where code like '%${value}%' and deleted = '0' and active='0'
+		order by version desc
+	</select>
+</mapper>
+
+
+
+
+
+
