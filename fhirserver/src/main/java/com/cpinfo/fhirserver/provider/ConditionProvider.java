@@ -23,7 +23,6 @@ import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.exceptions.InvalidResponseException;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
@@ -75,9 +74,7 @@ public class ConditionProvider implements IResourceProvider {
 			e.printStackTrace();
 			throw new InvalidResponseException(400, e.getMessage());
 		}
-		MethodOutcome out = new MethodOutcome();
-		out.setResource(condition);
-		return out;
+		return new MethodOutcome(condition.getIdElement());
 	}
 	
 	

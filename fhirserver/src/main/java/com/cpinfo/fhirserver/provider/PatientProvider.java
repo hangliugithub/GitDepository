@@ -38,6 +38,7 @@ public class PatientProvider implements IResourceProvider {
 	public MethodOutcome createPatient(@ResourceParam Patient thePatient) {
 		//validateResource(thePatient);
 		//System.out.println(thePatient.getNameFirstRep().getFamilyAsSingleString());
+		
 		try {
 			Patient p = service.createPatient(thePatient);
 			return new MethodOutcome(p.getId(),true);
@@ -73,9 +74,8 @@ public class PatientProvider implements IResourceProvider {
 			e.printStackTrace();
 			throw new InvalidResponseException(400, e.getMessage());
 		}
-		MethodOutcome out = new MethodOutcome();
-		out.setResource(patient);
-		return out;
+		
+		return new MethodOutcome(patient.getIdElement());
 	}
 	
 	

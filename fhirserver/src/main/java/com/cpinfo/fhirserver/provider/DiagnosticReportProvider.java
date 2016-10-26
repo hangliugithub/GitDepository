@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.cpinfo.fhirserver.service.DiagnosticReportService;
 import com.cpinfo.fhirserver.util.AppCtx;
+import com.cpinfo.fhirserver.util.MyParser;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
@@ -15,6 +17,7 @@ import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.History;
 import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.IncludeParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -54,6 +57,8 @@ public class DiagnosticReportProvider implements IResourceProvider{
 		try {
 			System.out.println(id.getValue().split("/")[1]);
 			DiagnosticReport d= service.readDiag(id.getValue().split("/")[1]);
+			//System.out.println(MyParser.parseToXML(d));
+			//System.out.println(d.getContained().getContainedResources().size());//1
 			return d;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -72,9 +77,7 @@ public class DiagnosticReportProvider implements IResourceProvider{
 			e.printStackTrace();
 			throw new InvalidResponseException(400, e.getMessage());
 		}
-		MethodOutcome out = new MethodOutcome();
-		out.setResource(diag);
-		return out;
+		return new MethodOutcome(diag.getIdElement());
 	}
 	
 	

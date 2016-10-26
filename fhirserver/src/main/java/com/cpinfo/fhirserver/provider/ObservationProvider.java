@@ -73,9 +73,7 @@ public class ObservationProvider implements IResourceProvider {
 			e.printStackTrace();
 			throw new InvalidResponseException(400, e.getMessage());
 		}
-		MethodOutcome out = new MethodOutcome();
-		out.setResource(obs);
-		return out;
+		return new MethodOutcome(obs.getIdElement());
 	}
 	
 	

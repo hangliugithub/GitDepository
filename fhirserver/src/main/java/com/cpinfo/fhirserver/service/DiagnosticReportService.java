@@ -78,20 +78,27 @@ public class DiagnosticReportService {
 		String results = map.get("results".toUpperCase())+"";
 		String[] res = results.split("#");
 		List<IResource> observations = new ArrayList<IResource>();
+		DiagnosticReport diag = setDiagInfo(map);
 		for(String r:res){
 			System.out.println(r);
 			Observation obs = obsService.readObservation(r);
-			//System.out.println(MyParser.parseToXML(obs));
 			observations.add(obs);
+			//obs.setId(new IdDt("#1006"));
+			//必须引用localID，以#开头
+			diag.addResult().setReference(new IdDt("#"+obs.getId().getValueAsString()));
+			diag.getContained().getContainedResources().add(obs);
+			//System.out.println(MyParser.parseToXML(obs));
+			//System.out.println(obs.getId().getValue());
+			
 		}
-		DiagnosticReport diag = setDiagInfo(map);
-		ContainedDt cdt = new ContainedDt();
-		cdt.setContainedResources(observations);
-		diag.setContained(cdt);
+//		ContainedDt cdt = new ContainedDt();
+//		cdt.setContainedResources(observations);
+//		diag.setContained(cdt);
+		//diag.getContained().setContainedResources(observations);
 		
-		for(IResource i: diag.getContained().getContainedResources()){
-			System.out.println(MyParser.parseToJSON(i));
-		}
+//		for(IResource i: diag.getContained().getContainedResources()){
+//			System.out.println(MyParser.parseToJSON(i));
+//		}
 		
 		return diag;
 	}
@@ -140,15 +147,17 @@ public class DiagnosticReportService {
 			//去查找该检验报告包含的observation
 			String results = map.get("results".toUpperCase())+"";
 			String[] res = results.split("#");
-			List<IResource> observations = new ArrayList<IResource>();
+			//List<IResource> observations = new ArrayList<IResource>();
+			DiagnosticReport diag= setDiagInfo(map);
 			for(String r:res){
 				Observation obs = obsService.readObservation(r);
-				observations.add(obs);
+				//observations.add(obs);
+				diag.addResult().setReference(new IdDt("#"+obs.getId().getValueAsString()));
+				diag.getContained().getContainedResources().add(obs);
 			}
-			DiagnosticReport diag= setDiagInfo(map);
-			ContainedDt cdt = new ContainedDt();
-			cdt.setContainedResources(observations);
-			diag.setContained(cdt);
+			//ContainedDt cdt = new ContainedDt();
+			//cdt.setContainedResources(observations);
+			//diag.setContained(cdt);
 			
 			diags.add(diag);
 		}
@@ -170,15 +179,18 @@ public class DiagnosticReportService {
 			//去查找该检验报告包含的observation
 			String results = map.get("results".toUpperCase())+"";
 			String[] res = results.split("#");
-			List<IResource> observations = new ArrayList<IResource>();
+			//List<IResource> observations = new ArrayList<IResource>();
+			DiagnosticReport diag= setDiagInfo(map);
 			for(String r:res){
 				Observation obs = obsService.readObservation(r);
-				observations.add(obs);
+				//observations.add(obs);
+				diag.addResult().setReference(new IdDt("#"+obs.getId().getValueAsString()));
+				diag.getContained().getContainedResources().add(obs);
 			}
-			DiagnosticReport diag= setDiagInfo(map);
-			ContainedDt cdt = new ContainedDt();
-			cdt.setContainedResources(observations);
-			diag.setContained(cdt);
+//			ContainedDt cdt = new ContainedDt();
+//			cdt.setContainedResources(observations);
+//			diag.setContained(cdt);
+			//diag.getContained().setContainedResources(observations);
 			
 			diags.add(diag);
 		}
@@ -286,12 +298,12 @@ public class DiagnosticReportService {
 		String[] perfs = perf.split("#");
 		diag.setPerformer(new ResourceReferenceDt().setReference(perfs[0]).setDisplay(perfs[1]));
 		
-		String[] result = results.split("#");
-		List<ResourceReferenceDt> rdtList = new ArrayList<ResourceReferenceDt>();
-		for(String r : result){
-			rdtList.add(new ResourceReferenceDt(r));
-		}
-		diag.setResult(rdtList);
+//		String[] result = results.split("#");
+//		List<ResourceReferenceDt> rdtList = new ArrayList<ResourceReferenceDt>();
+//		for(String r : result){
+//			rdtList.add(new ResourceReferenceDt(r));
+//		}
+//		diag.setResult(rdtList);
 		
 		//diag.setContained(new ContainedDt().setContainedResources(List<IResource>));
 		return diag;
