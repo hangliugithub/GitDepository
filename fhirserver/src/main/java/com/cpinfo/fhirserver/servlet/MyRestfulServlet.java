@@ -15,29 +15,17 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 
-public class MyRestfulServlet extends RestfulServer{
-
-	/**
-	 * 
-	 */
+public class MyRestfulServlet extends RestfulServer {
 	private static final long serialVersionUID = 2973870641316437130L;
-	
-	/**
-	 * Constructor
-	 */
+
 	public MyRestfulServlet() {
 		super(FhirContext.forDstu2()); // Support DSTU2
 	}
-	
-	/**
-	 * This method is called automatically when the
-	 * servlet is initializing.
-	 */
+
 	@Override
 	public void initialize() {
 		/*
-		 * Two resource providers are defined. Each one handles a specific
-		 * type of resource.
+		 * 添加处理某种资源的Provider
 		 */
 		List<IResourceProvider> providers = new ArrayList<IResourceProvider>();
 		providers.add(new PatientProvider());
@@ -45,28 +33,29 @@ public class MyRestfulServlet extends RestfulServer{
 		providers.add(new ObservationProvider());
 		providers.add(new DiagnosticReportProvider());
 		setResourceProviders(providers);
-		
-		/*
-		 * Use a narrative generator. This is a completely optional step, 
-		 * but can be useful as it causes HAPI to generate narratives for
-		 * resources which don't otherwise have one.
-		 */
-//		INarrativeGenerator narrativeGen = new DefaultThymeleafNarrativeGenerator();
-//		getFhirContext().setNarrativeGenerator(narrativeGen);
 
 		/*
-		 * This server interceptor causes the server to return nicely
-		 * formatter and coloured responses instead of plain JSON/XML if
-		 * the request is coming from a browser window. It is optional,
-		 * but can be nice for testing.
+		 * Use a narrative generator. This is a completely optional step, but
+		 * can be useful as it causes HAPI to generate narratives for resources
+		 * which don't otherwise have one.
 		 */
-		//registerInterceptor(new ResponseHighlighterInterceptor());
-		
+		// INarrativeGenerator narrativeGen = new
+		// DefaultThymeleafNarrativeGenerator();
+		// getFhirContext().setNarrativeGenerator(narrativeGen);
+
 		/*
-		 * Tells the server to return pretty-printed responses by default
+		 * This server interceptor causes the server to return nicely formatter
+		 * and coloured responses instead of plain JSON/XML if the request is
+		 * coming from a browser window. It is optional, but can be nice for
+		 * testing.
+		 */
+		// registerInterceptor(new ResponseHighlighterInterceptor());
+
+		/*
+		 *格式化输出json或者xml字符串
 		 */
 		setDefaultPrettyPrint(true);
-		
+
 	}
-	
+
 }

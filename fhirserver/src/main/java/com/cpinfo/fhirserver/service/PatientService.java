@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.cpinfo.fhirserver.dao.PatientDao;
 
+import ca.uhn.fhir.model.api.ExtensionDt;
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
 import ca.uhn.fhir.model.base.resource.ResourceMetadataMap;
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
@@ -30,6 +31,7 @@ import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ContactPointSystemEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ContactPointUseEnum;
 import ca.uhn.fhir.model.primitive.DateDt;
+import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
@@ -49,8 +51,8 @@ public class PatientService{
 	public Patient createPatient(Patient p){
 		
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-		metaMap.put(ResourceMetadataKeyEnum.UPDATED, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+		//metaMap.put(ResourceMetadataKeyEnum.UPDATED, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		p.setResourceMetadata(metaMap);
 		
 		Map<String,String> patientMap = getPatientInfo(p);
@@ -129,7 +131,7 @@ public class PatientService{
 		
 		//p.setId(id);
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		p.setResourceMetadata(metaMap);
 		Map<String,String> patientMap = getPatientInfo(p);
 		patientDao.setActive(p.getId().getValueAsString());
@@ -147,25 +149,37 @@ public class PatientService{
 	}
 	
 	/**
-	 * 将一个Patient资源对象中的信息映射成map
+	 * 将一个Patient资源对象中的信息映射到map
 	 * @param p 
 	 * @return
 	 */
 	private Map<String,String> getPatientInfo(Patient p){
 		String id = p.getId().getValueAsString();
-		String version = p.getResourceMetadata().get(ResourceMetadataKeyEnum.VERSION).toString();
+		String version = p.getResourceMetadata()
+				.get(ResourceMetadataKeyEnum.VERSION).toString();
 		String idcard = p.getIdentifierFirstRep().getValue();
 		String ssid = p.getIdentifier().get(1).getValue();
 		String name = p.getNameFirstRep().getText();
+		if(!p.getNameFirstRep().getFamilyFirstRep().isEmpty()){
+			name=p.getNameFirstRep().getFamilyFirstRep().getValue()
+					+""+p.getNameFirstRep().getGivenFirstRep().getValue();
+		}
 		String gender = p.getGender();
-		String birthdate = p.getBirthDateElement().getValueAsString();
+		
+		String birthdate = "";
+		if(p.getBirthDate()==null){
+			birthdate = "no";
+		}
+		birthdate = p.getBirthDate().getTime()+"";
 		String phone = p.getTelecom().get(0).getValue();
 		
 		AddressDt adt = p.getAddress().get(0);
-		String address = adt.getUse()+"-"+adt.getState()+"-"+adt.getDistrict()+"-"+adt.getCity()+"-"+adt.getLine().get(0).getValue()+"-"+adt.getPostalCode();
+		String address = adt.getState()+"-"+adt.getDistrict()+"-"+adt.getCity()+"-"
+						+adt.getLine().get(0).getValue()+"-"+adt.getPostalCode();
 		
 		Patient.Contact cat = p.getContact().get(0);
-		String contact = cat.getRelationship().get(0).getCoding().get(0).getCode()+"-"+cat.getName().getText()+"-"+cat.getGender()+"-"+cat.getTelecomFirstRep().getValue();
+		String contact = cat.getRelationship().get(0).getCoding().get(0).getCode()
+				+"-"+cat.getName().getText()+"-"+cat.getGender()+"-"+cat.getTelecomFirstRep().getValue();
 		
 		//String active = p.getActive().toString();
 		
@@ -222,7 +236,8 @@ public class PatientService{
 		
 		ResourceMetadataMap map = new ResourceMetadataMap();
 		//map.put(ResourceMetadataKeyEnum.VERSION, version);
-		map.put(ResourceMetadataKeyEnum.UPDATED, new InstantDt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(version)));
+		map.put(ResourceMetadataKeyEnum.UPDATED,
+				new InstantDt(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").parse(version)));
 		p.setResourceMetadata(map);
 		
 		List<HumanNameDt> list = new ArrayList<HumanNameDt>();
@@ -238,7 +253,8 @@ public class PatientService{
 		p.setIdentifier(idList);
 		
 		List<ContactPointDt> teList = new ArrayList<ContactPointDt>();
-		ContactPointDt cd = new ContactPointDt().setUse(ContactPointUseEnum.MOBILE).setSystem(ContactPointSystemEnum.PHONE).setValue(phone);
+		ContactPointDt cd = new ContactPointDt().setUse(ContactPointUseEnum.MOBILE)
+				.setSystem(ContactPointSystemEnum.PHONE).setValue(phone);
 		teList.add(cd);
 		p.setTelecom(teList);
 		
@@ -247,15 +263,24 @@ public class PatientService{
 		else
 			p.setGender(AdministrativeGenderEnum.FEMALE);
 		
-		DateDt ddt = new DateDt(birthdate);
-		//ddt.addUndeclaredExtension(new ExtensionDt().setUrl("http://hl7.org/fhir/StructureDefinition/patient-birthTime").setValue(new DateTimeDt(birthdate)));
-		p.setBirthDate(ddt);
+		if(!"no".equalsIgnoreCase(birthdate)){
+			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+			DateDt ddt = new DateDt(new Date(Long.valueOf(birthdate)));
+			ddt.addUndeclaredExtension(new ExtensionDt()
+					.setUrl("http://hl7.org/fhir/StructureDefinition/patient-birthTime")
+					.setValue(new DateTimeDt(new Date(Long.valueOf(birthdate)))));
+			p.setBirthDate(ddt);
+		}else{
+			p.setBirthDate(new DateDt(new Date()));
+		}
 		
 		List<AddressDt> addrDt = new ArrayList<AddressDt>();
 		List<StringDt> strDt = new ArrayList<StringDt>();
 		String[] addrStr = address.split("-");
  		strDt.add(new StringDt(addrStr[3]));
-		AddressDt adt = new AddressDt().setUse(AddressUseEnum.HOME).setState(addrStr[0]).setDistrict(addrStr[1]).setCity(addrStr[2]).setLine(strDt).setPostalCode(addrStr[4]);
+		AddressDt adt = new AddressDt().setUse(AddressUseEnum.HOME)
+				.setState(addrStr[0]).setDistrict(addrStr[1])
+				.setCity(addrStr[2]).setLine(strDt).setPostalCode(addrStr[4]);
 		addrDt.add(adt);
 		p.setAddress(addrDt);
 		
@@ -271,11 +296,13 @@ public class PatientService{
 			pct.setGender(AdministrativeGenderEnum.FEMALE);
 		
 		List<ContactPointDt> ctaList = new ArrayList<ContactPointDt>();
-		ctaList.add(new ContactPointDt().setSystem(ContactPointSystemEnum.PHONE).setValue(contactStr[3]));
+		ctaList.add(new ContactPointDt()
+				.setSystem(ContactPointSystemEnum.PHONE).setValue(contactStr[3]));
 		pct.setTelecom(ctaList);
 		List<CodeableConceptDt> relList = new ArrayList<CodeableConceptDt>();
 		List<CodingDt> codingdt = new ArrayList<CodingDt>();
-		codingdt.add(new CodingDt().setCode(contactStr[0]).setSystem("http://hl7.org/fhir/patient-contact-relationship"));
+		codingdt.add(new CodingDt().setCode(contactStr[0])
+				.setSystem("http://hl7.org/fhir/patient-contact-relationship"));
 		relList.add(new CodeableConceptDt().setCoding(codingdt));
 		pct.setRelationship(relList);
 		contactList.add(pct);

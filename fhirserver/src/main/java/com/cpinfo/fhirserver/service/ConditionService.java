@@ -49,7 +49,7 @@ public class ConditionService {
 //		}
 //		Condition condition = MyParser.parseToObject(str, strType, Condition.class);
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		condition.setResourceMetadata(metaMap);
 		
 		Map<String,String> conditionMap = getConditionInfo(condition);
@@ -107,7 +107,7 @@ public class ConditionService {
 //			throw new RuntimeException("×Ö·û´®½âÎöÊ§°Ü");
 //		}
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		condition.setResourceMetadata(metaMap);
 		Map<String,String> conditionMap = getConditionInfo(condition);
 		//conditionMap.put("id", id);
@@ -172,12 +172,14 @@ public class ConditionService {
 	private Map<String,String> getConditionInfo(Condition condition){
 		try{
 			String id = condition.getId().getValue();
-			String version = condition.getResourceMetadata().get(ResourceMetadataKeyEnum.VERSION).toString();
-			String text = condition.getText().getDivElement().getValueAsString();
+			String version = condition.getResourceMetadata()
+					.get(ResourceMetadataKeyEnum.VERSION).toString();
+			String text = condition.getText().getDivElement().getValueAsString()+"";
 			String patientid = condition.getPatient().getReference().getValueAsString();
 			String encounterid = condition.getEncounter().getReference().getValueAsString();
 			String asserterid = condition.getAsserter().getReference().getValueAsString();
-			String code = condition.getCode().getCoding().get(0).getCode()+"-"+condition.getCode().getCoding().get(0).getDisplay();
+			String code = condition.getCode().getCoding().get(0).getCode()
+					+"-"+condition.getCode().getCoding().get(0).getDisplay();
 			//String category = condition.getCategory().getCoding().get(0).getCode()+"-"+condition.getCategory().getCoding().get(0).getDisplay();
 			String clinicalstatus = condition.getClinicalStatus();
 			String verificationstatus = condition.getVerificationStatus();
@@ -215,7 +217,9 @@ public class ConditionService {
 	 * @throws ParseException 
 	 */
 	private Condition setConditionInfo(Map<String,String> map) throws ParseException{
-		
+		for(Entry<String,String> ent:map.entrySet()){
+			System.out.println(ent.getKey()+":"+ent.getValue());
+		}
 		String id = map.get("ID")+"";
 		String version = map.get("VERSION")+"";
 		String text = map.get("TEXT")+"";
@@ -228,59 +232,55 @@ public class ConditionService {
 		String verificationstatus = map.get("VERIFICATIONSTATUS")+"";
 		String onset = map.get("ONSET")+"";
 		
-		
 		Condition condition = new Condition();
-		
 		condition.setId(new IdDt(id).withVersion(version));
-		
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.UPDATED, new InstantDt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(version)));
+		metaMap.put(ResourceMetadataKeyEnum.UPDATED
+				, new InstantDt(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").parse(version)));
 		condition.setResourceMetadata(metaMap);
-		
-		
 		NarrativeDt  theText = new NarrativeDt();
 		theText.setStatus(NarrativeStatusEnum.GENERATED);
 		theText.setDiv(text);
 		condition.setText(theText);
-		
 		condition.setPatient(new ResourceReferenceDt(patientid));
-		
 		condition.setEncounter(new ResourceReferenceDt(encounterid));
-		
 		condition.setAsserter(new ResourceReferenceDt(asserterid));
-		
 		CodeableConceptDt theCode = new CodeableConceptDt();
 		List<CodingDt> theCodingDt =  new ArrayList<CodingDt>();
 		String[] codes = code.split("-");
-		theCodingDt.add(new CodingDt().setSystem("http://www.icd10data.com/icd10pcs").setCode(codes[0]).setDisplay(codes[1]));
+		theCodingDt.add(new CodingDt()
+				.setSystem("http://www.icd10data.com/icd10pcs")
+				.setCode(codes[0])
+				.setDisplay(codes[1]));
 		theCode.setCoding(theCodingDt);
 		condition.setCode(theCode);
-		
 		//condition.setCategory(ConditionCategoryCodesEnum.DIAGNOSIS);
 		@SuppressWarnings("deprecation")
-		BoundCodeableConceptDt<ConditionCategoryCodesEnum> theCodeDt = new BoundCodeableConceptDt<ConditionCategoryCodesEnum>();
-		theCodeDt.addCoding(new CodingDt().setSystem("http://hl7.org/fhir/condition-category").setCode("diagnosis").setDisplay("Õï¶Ï"));
+		BoundCodeableConceptDt<ConditionCategoryCodesEnum> theCodeDt
+			= new BoundCodeableConceptDt<ConditionCategoryCodesEnum>();
+		theCodeDt.addCoding(new CodingDt()
+				.setSystem("http://hl7.org/fhir/condition-category")
+				.setCode("diagnosis").setDisplay("Õï¶Ï"));
 		condition.setCategory(theCodeDt);
-		
 		if("active".equalsIgnoreCase(clinicalstatus))
-			condition.setClinicalStatus(ConditionClinicalStatusCodesEnum.ACTIVE);
-		
+			condition
+			.setClinicalStatus(ConditionClinicalStatusCodesEnum.ACTIVE);
 		if("relapse".equalsIgnoreCase(clinicalstatus))
-			condition.setClinicalStatus(ConditionClinicalStatusCodesEnum.RELAPSE);
-		
+			condition
+			.setClinicalStatus(ConditionClinicalStatusCodesEnum.RELAPSE);
 		if("remission".equalsIgnoreCase(clinicalstatus))
-			condition.setClinicalStatus(ConditionClinicalStatusCodesEnum.REMISSION);
-		
+			condition
+			.setClinicalStatus(ConditionClinicalStatusCodesEnum.REMISSION);
 		if("resolved".equalsIgnoreCase(clinicalstatus))
-			condition.setClinicalStatus(ConditionClinicalStatusCodesEnum.RESOLVED);
-		
+			condition
+			.setClinicalStatus(ConditionClinicalStatusCodesEnum.RESOLVED);
 		if("confirmed".equalsIgnoreCase(verificationstatus))
-			condition.setVerificationStatus(ConditionVerificationStatusEnum.CONFIRMED);
+			condition
+			.setVerificationStatus(ConditionVerificationStatusEnum.CONFIRMED);
 		else
-			condition.setVerificationStatus(ConditionVerificationStatusEnum.PROVISIONAL);
-		
+			condition
+			.setVerificationStatus(ConditionVerificationStatusEnum.PROVISIONAL);
 		condition.setOnset(new DateTimeDt(onset));
-		
 		return condition;
 	}
 }

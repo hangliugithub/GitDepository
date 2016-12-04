@@ -52,7 +52,7 @@ public class ObservationService {
 //		Observation obs = MyParser.parseToObject(str, strType, Observation.class);
 		//System.out.println(p);
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		obs.setResourceMetadata(metaMap);
 		
 		Map<String,String> obsMap = getObseInfo(obs);
@@ -89,7 +89,7 @@ public class ObservationService {
 //		obs = MyParser.parseToObject(str, strType, Observation.class);
 //		obs.setId(id);
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		obs.setResourceMetadata(metaMap);
 		Map<String,String> obsMap = getObseInfo(obs);
 		obsDao.setActive(obs.getId().getValueAsString());
@@ -151,20 +151,25 @@ public class ObservationService {
 	 */
 	private Map<String,String> getObseInfo(Observation obs){
 		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		
 		String id = obs.getId().getValueAsString();
-		String version = obs.getResourceMetadata().get(ResourceMetadataKeyEnum.VERSION).toString();
-		String text = obs.getText().getDivAsString();
+		String version = obs.getResourceMetadata()
+				.get(ResourceMetadataKeyEnum.VERSION).toString();
+		String text = obs.getText().getDivAsString()+"";
 		String identifier = obs.getIdentifierFirstRep().getValue();
 		String status = obs.getStatus();
-		String code = obs.getCode().getCodingFirstRep().getCode()+"#"+obs.getCode().getCodingFirstRep().getDisplay();
-		String sub = obs.getSubject().getReference().getValueAsString()+"#"+ obs.getSubject().getDisplay();
-		String perf = obs.getPerformer().get(0).getReference().getValueAsString()+"#"+obs.getPerformer().get(0).getDisplay();
-		String effect = ((PeriodDt)obs.getEffective()).getStart().toInstant()+","+((PeriodDt)obs.getEffective()).getEnd().toInstant();
+		String code = obs.getCode().getCodingFirstRep().getCode()
+				+"#"+obs.getCode().getCodingFirstRep().getDisplay();
+		String sub = obs.getSubject().getReference().getValueAsString()
+				+"#"+ obs.getSubject().getDisplay();
+		String perf = obs.getPerformer().get(0).getReference()
+				.getValueAsString()+"#"+obs.getPerformer().get(0).getDisplay();
+		String effect = ((PeriodDt)obs.getEffective()).getStart()
+				.toInstant()+","+((PeriodDt)obs.getEffective()).getEnd().toInstant();
 		String issued = obs.getIssued().toInstant().toString();
 		String valueQua = ((QuantityDt)obs.getValue()).getValue()+"";
 		String unit = ((QuantityDt)obs.getValue()).getUnit();
-		String range = obs.getReferenceRangeFirstRep().getLow().getValue()+"-"+obs.getReferenceRangeFirstRep().getHigh().getValue();
+		String range = obs.getReferenceRangeFirstRep().getLow()
+				.getValue()+"-"+obs.getReferenceRangeFirstRep().getHigh().getValue();
 		String interp = obs.getInterpretation().getCodingFirstRep().getCode();
 		
 		Map<String,String> map = new HashMap<String, String>();
@@ -199,6 +204,9 @@ public class ObservationService {
 	 */
 	private Observation setObseInfo(Map<String,String> map) throws ParseException{
 		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		for(Entry<String,String> ent:map.entrySet()){
+			System.out.println(ent.getKey()+":"+ent.getValue());
+		}
 		
 		String id = map.get("id".toUpperCase())+"";
 		String text = map.get("text".toUpperCase())+"";
@@ -218,10 +226,9 @@ public class ObservationService {
 		Observation obs = new Observation();
 		
 		obs.setId(new IdDt(id).withVersion(version));
-		
 		ResourceMetadataMap resMap = new ResourceMetadataMap();
-		//resMap.put(ResourceMetadataKeyEnum.VERSION, version);
-		resMap.put(ResourceMetadataKeyEnum.UPDATED, new InstantDt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(version)));
+		resMap.put(ResourceMetadataKeyEnum.UPDATED,
+				new InstantDt(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").parse(version)));
 		obs.setResourceMetadata(resMap);
 		
 		NarrativeDt ndt = new NarrativeDt();
@@ -230,7 +237,9 @@ public class ObservationService {
 		obs.setText(ndt);
 		
 		List<IdentifierDt> identList = new ArrayList<IdentifierDt>();
-		IdentifierDt idt = new IdentifierDt().setUse(IdentifierUseEnum.OFFICIAL).setValue(identifier);
+		IdentifierDt idt = new IdentifierDt()
+				.setUse(IdentifierUseEnum.OFFICIAL)
+				.setValue(identifier);
 		identList.add(idt);
 		obs.setIdentifier(identList);
 		
@@ -238,15 +247,22 @@ public class ObservationService {
 		
 		String[] codes = code.split("#");
 		CodeableConceptDt codeDt = new CodeableConceptDt();
-		codeDt.addCoding().setSystem("http://loinc.org").setCode(codes[0]).setDisplay(codes[1]);
+		codeDt.addCoding()
+		.setSystem("http://loinc.org")
+		.setCode(codes[0])
+		.setDisplay(codes[1]);
 		obs.setCode(codeDt);
 		
 		String[] subs = sub.split("#");
-		obs.setSubject(new ResourceReferenceDt().setReference(subs[0]).setDisplay(subs[1]));
+		obs.setSubject(new ResourceReferenceDt()
+				.setReference(subs[0])
+				.setDisplay(subs[1]));
 		
 		String[] perfs = perf.split("#");
 		List<ResourceReferenceDt> resList = new ArrayList<ResourceReferenceDt>();
-		resList.add(new ResourceReferenceDt().setReference(perfs[0]).setDisplay(perfs[1]));
+		resList.add(new ResourceReferenceDt()
+				.setReference(perfs[0])
+				.setDisplay(perfs[1]));
 		obs.setPerformer(resList);
 		
 		String[] effes = effect.split(",");
@@ -257,13 +273,18 @@ public class ObservationService {
 		
 		obs.setIssued(new InstantDt(issued));
 		
-		obs.setValue(new QuantityDt(QuantityComparatorEnum.GREATER_OR_EQUAL_TO,new Double(valueQua), "http://unitsofmeasure.org", unit).setCode(unit));
+		obs.setValue(new QuantityDt(QuantityComparatorEnum.GREATER_OR_EQUAL_TO,
+				new Double(valueQua), "http://unitsofmeasure.org", unit).setCode(unit));
 		
 		obs.setInterpretation(new CodeableConceptDt("http://hl7.org/fhir/v2/0078", interp));
 		
 		String[] rangs = range.split("-");
 		List<ReferenceRange> rangList = new ArrayList<Observation.ReferenceRange>();
-		rangList.add(new ReferenceRange().setLow(new SimpleQuantityDt(new Double(rangs[0]), "http://unitsofmeasure.org", unit)).setHigh(new SimpleQuantityDt(new Double(rangs[1]), "http://unitsofmeasure.org", unit)));
+		rangList.add(new ReferenceRange()
+				.setLow(new SimpleQuantityDt(new Double(rangs[0]),
+						"http://unitsofmeasure.org", unit))
+				.setHigh(new SimpleQuantityDt(new Double(rangs[1]),
+						"http://unitsofmeasure.org", unit)));
 		obs.setReferenceRange(rangList);
 		
 		return obs;

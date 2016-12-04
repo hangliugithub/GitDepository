@@ -14,13 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cpinfo.fhirserver.dao.DiagnosticReportDao;
-import com.cpinfo.fhirserver.util.MyParser;
 
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
 import ca.uhn.fhir.model.base.resource.ResourceMetadataMap;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.ContainedDt;
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.composite.NarrativeDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
@@ -48,12 +45,8 @@ public class DiagnosticReportService {
 	 * @return
 	 */
 	public DiagnosticReport createDiag(DiagnosticReport diag){
-//		if((str==null||str.length()==0) || (strType==null||strType.length()==0)){
-//			throw new RuntimeException("字符串或字符串类型不能为空");
-//		}
-//		DiagnosticReport diag = MyParser.parseToObject(str, strType, DiagnosticReport.class);
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		diag.setResourceMetadata(metaMap);
 		
 		Map<String,String> diagMap = getDiagInfo(diag);
@@ -77,15 +70,15 @@ public class DiagnosticReportService {
 		//去查找该检验报告包含的observation
 		String results = map.get("results".toUpperCase())+"";
 		String[] res = results.split("#");
-		List<IResource> observations = new ArrayList<IResource>();
+		//List<IResource> observations = new ArrayList<IResource>();
 		DiagnosticReport diag = setDiagInfo(map);
 		for(String r:res){
 			System.out.println(r);
 			Observation obs = obsService.readObservation(r);
-			observations.add(obs);
-			//obs.setId(new IdDt("#1006"));
+			//observations.add(obs);
+			obs.setId(obs.getId().getValue().split("/")[0]);
 			//必须引用localID，以#开头
-			diag.addResult().setReference(new IdDt("#"+obs.getId().getValueAsString()));
+			diag.addResult().setReference("#"+obs.getId().getValue().split("/")[0]);
 			diag.getContained().getContainedResources().add(obs);
 			//System.out.println(MyParser.parseToXML(obs));
 			//System.out.println(obs.getId().getValue());
@@ -114,7 +107,7 @@ public class DiagnosticReportService {
 //		diag = MyParser.parseToObject(str, strType, DiagnosticReport.class);
 //		diag.setId(id);
 		ResourceMetadataMap metaMap = new ResourceMetadataMap();
-		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		metaMap.put(ResourceMetadataKeyEnum.VERSION, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 		diag.setResourceMetadata(metaMap);
 		Map<String,String> diagMap = getDiagInfo(diag);
 		diagDao.setActive(diag.getId().getValueAsString());
@@ -152,7 +145,9 @@ public class DiagnosticReportService {
 			for(String r:res){
 				Observation obs = obsService.readObservation(r);
 				//observations.add(obs);
-				diag.addResult().setReference(new IdDt("#"+obs.getId().getValueAsString()));
+				obs.setId(obs.getId().getValue().split("/")[0]);
+				//必须引用localID，以#开头
+				diag.addResult().setReference("#"+obs.getId().getValue().split("/")[0]);
 				diag.getContained().getContainedResources().add(obs);
 			}
 			//ContainedDt cdt = new ContainedDt();
@@ -183,14 +178,11 @@ public class DiagnosticReportService {
 			DiagnosticReport diag= setDiagInfo(map);
 			for(String r:res){
 				Observation obs = obsService.readObservation(r);
-				//observations.add(obs);
-				diag.addResult().setReference(new IdDt("#"+obs.getId().getValueAsString()));
+				obs.setId(obs.getId().getValue().split("/")[0]);
+				//必须引用localID，以#开头
+				diag.addResult().setReference("#"+obs.getId().getValue().split("/")[0]);
 				diag.getContained().getContainedResources().add(obs);
 			}
-//			ContainedDt cdt = new ContainedDt();
-//			cdt.setContainedResources(observations);
-//			diag.setContained(cdt);
-			//diag.getContained().setContainedResources(observations);
 			
 			diags.add(diag);
 		}
@@ -205,15 +197,25 @@ public class DiagnosticReportService {
 	private Map<String,String> getDiagInfo(DiagnosticReport diag){
 		
 		String id = diag.getId().getValue();
-		String version = diag.getResourceMetadata().get(ResourceMetadataKeyEnum.VERSION).toString();
-		String text = diag.getText().getDivAsString();
+		String version = diag.getResourceMetadata()
+				.get(ResourceMetadataKeyEnum.VERSION).toString();
+		String text = diag.getText().getDivAsString()+"";
 		String identifier = diag.getIdentifierFirstRep().getValue();
 		String status = diag.getStatus();
-		String code = diag.getCode().getCodingFirstRep().getCode()+"#"+diag.getCode().getText();
-		String sub = diag.getSubject().getReference().getValueAsString()+"#"+ diag.getSubject().getDisplay();
-		String effect = ((DateTimeDt)diag.getEffective()).getValueAsString();
+		String code = diag.getCode().getCodingFirstRep()
+				.getCode()+"#"+diag.getCode()
+				.getCodingFirstRep().getDisplay();
+		String sub = diag.getSubject()
+				.getReference().getValueAsString()+"#"
+				+ diag.getSubject().getDisplay();
+		String effect = ((DateTimeDt)diag.getEffective())
+				.getValueAsString();
 		String issued = diag.getIssued().toInstant().toString();
-		String perf = diag.getPerformer().getReference().getValueAsString()+"#"+diag.getPerformer().getDisplay();
+		String perf = diag.getPerformer()
+				.getReference()
+				.getValueAsString()+"#"
+				+diag.getPerformer()
+				.getDisplay();
 		String results = "";
 		List<ResourceReferenceDt> resultList = diag.getResult();
 		for(ResourceReferenceDt r : resultList){
@@ -249,6 +251,10 @@ public class DiagnosticReportService {
 	 */
 	private DiagnosticReport setDiagInfo(Map<String,String> map) throws ParseException{
 		
+		for(Entry<String,String> ent:map.entrySet()){
+			System.out.println(ent.getKey()+":"+ent.getValue());
+		}
+		
 		String id = map.get("id".toUpperCase())+"";
 		String version = map.get("version".toUpperCase())+"";
 		String text = map.get("text".toUpperCase())+"";
@@ -259,44 +265,43 @@ public class DiagnosticReportService {
 		String effect = map.get("effect".toUpperCase())+"";
 		String issued = map.get("issued".toUpperCase())+"";
 		String perf = map.get("perf".toUpperCase())+"";
-		String results = map.get("results".toUpperCase())+"";
+		//String results = map.get("results".toUpperCase())+"";
 		
 		DiagnosticReport diag = new DiagnosticReport();
-		
 		diag.setId(new IdDt(id).withVersion(version));
-		
 		ResourceMetadataMap resMap = new ResourceMetadataMap();
 		//resMap.put(ResourceMetadataKeyEnum.VERSION, version);
-		resMap.put(ResourceMetadataKeyEnum.UPDATED, new InstantDt(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(version)));
+		resMap.put(ResourceMetadataKeyEnum.UPDATED,
+				new InstantDt(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").parse(version)));
 		diag.setResourceMetadata(resMap);
-		
 		NarrativeDt ndt = new NarrativeDt();
 		ndt.setStatus(NarrativeStatusEnum.GENERATED);
 		ndt.setDivAsString(text);
 		diag.setText(ndt);
-		
 		List<IdentifierDt> identList = new ArrayList<IdentifierDt>();
-		IdentifierDt idt = new IdentifierDt().setUse(IdentifierUseEnum.OFFICIAL).setValue(identifier).setSystem("http://acme.com/lab/reports");
+		IdentifierDt idt = new IdentifierDt()
+				.setUse(IdentifierUseEnum.OFFICIAL)
+				.setValue(identifier)
+				.setSystem("http://acme.com/lab/reports");
 		identList.add(idt);
 		diag.setIdentifier(identList);
-		
 		diag.setStatus(DiagnosticReportStatusEnum.FINAL);
-		
 		String[] codes = code.split("#");
 		CodeableConceptDt codeDt = new CodeableConceptDt();
 		codeDt.setText(codes[1]);
-		codeDt.addCoding().setSystem("http://loinc.org").setCode(codes[0]).setDisplay(codes[1]);
+		codeDt.addCoding().setSystem("http://loinc.org")
+			.setCode(codes[0]).setDisplay(codes[1]);
 		diag.setCode(codeDt);
-		
 		String[] subs = sub.split("#");
-		diag.setSubject(new ResourceReferenceDt().setReference(subs[0]).setDisplay(subs[1]));
-		
+		diag.setSubject(new ResourceReferenceDt()
+				.setReference(subs[0])
+				.setDisplay(subs[1]));
 		diag.setEffective(new DateTimeDt(effect));
-		
 		diag.setIssued(new InstantDt(issued));
-		
 		String[] perfs = perf.split("#");
-		diag.setPerformer(new ResourceReferenceDt().setReference(perfs[0]).setDisplay(perfs[1]));
+		diag.setPerformer(new ResourceReferenceDt()
+				.setReference(perfs[0])
+				.setDisplay(perfs[1]));
 		
 //		String[] result = results.split("#");
 //		List<ResourceReferenceDt> rdtList = new ArrayList<ResourceReferenceDt>();

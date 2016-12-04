@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" http-equiv="access-control-allow-origin" content="*">
+
+<title>HL7-FHIR Client</title>
+<!-- JQUERY -->
+<script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/index.css"/>
+<link rel="stylesheet" type="text/css" href="css/magic-check.css"/>
+
+<script type="text/javascript" src="js/index.js"></script>
+</head>
+<body>
+	<div id="head_div">
+		HL7-FHIR Client <div>测试服务器：<input id="serv" type="text" size="50"  value="" title="按回车键确认更改"></div>
+	</div>
+	<div id="nav_div">
+		<div id="menu_div">
+			<p>
+			<span>数据格式：</span>
+			<select id="dataFormat" onchange="changedatatype()">
+				<option selected="selected" value="0">JSON</option>
+				<option value="1">XML</option>
+			</select>
+			<hr/>
+			<br>
+			<p>资源类型：</p>
+			<p><input class="magic-radio" type="radio" id="r1" name="resourceType" value="Patient" checked="checked"><label for="r1">患者(Patient)</label></p>
+			<p><input class="magic-radio" type="radio" id="r2" name="resourceType" value="Condition"><label for="r2">诊断(Condition)</label></p>
+			<p><input class="magic-radio" type="radio" id="r3" name="resourceType" value="DiagnosticReport"><label for="r3">检验报告(DiagnosticReport)</label></p>
+			<p><input class="magic-radio" type="radio" id="r4" name="resourceType" value="Observation"><label for="r4">检验项目结果(Observation)</label></p>
+			<br>
+			<hr/>
+			<br>
+			<br>
+			<p align="center">Powered By<br>HAPI FHIR 2.0 REST Client</p>
+		</div>
+	<!--  	后台：<input id="htdz" type="text" >
+		<input onclick="htdz()" id="ht" type="button" value="确定"> -->
+	</div>
+	<div id="content_div"></div>
+</body>
+</html>

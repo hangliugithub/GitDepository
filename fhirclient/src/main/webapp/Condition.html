@@ -1,0 +1,347 @@
+<div id="Condition" >
+	<p>
+		<button id="create" onclick="create()">创建</button>
+		<button id="update" onclick="update()">更新</button>
+		<button id="del" onclick="deletes()">删除</button>&emsp;&emsp;&emsp;
+		<input style="text" id="resourceId" placeholder="请输入诊断资源ID">
+		<button id="read" onclick="reads()">读取</button>
+		<button id="history" onclick="history()">所有历史版本</button>
+		&emsp;&emsp;&emsp;
+		<input style="text" id="resourcename" placeholder="请输入诊断名称">
+		<button id="search" onclick="searchs()">搜索</button>
+	</p>
+	
+	<!--  start -->
+	<div id="grid_div" class="grid">
+		<span id="text">记录条数：</span>
+		<select id="historyid"></select>
+    	<table class="table">
+    		<caption align="top" style="font-size: 20px">诊断(Condition)</caption>
+    		<tr>
+    			<td>
+    				资源id:<br><input id="chgid" type="text" readonly="readonly">
+    			</td>
+				<td> 
+					诊断名称:<br><input type="text" id="display" name="display" value="沙门菌胃肠炎">
+				</td>
+				<td>
+					患 者 id:<br><input id="patientid" name="patid" type="text" value="Patient/657">
+				</td>
+			</tr>	
+			<tr>
+				<td>
+					关联就诊号:<br><input id="encounterid" type="text" value="Encounter/221" >
+				</td>
+				<td>
+					诊断医生:<br><input id="asserterid" type="text" value="Practitioner/890">
+				</td>
+				<td>
+					诊断日期:<br><input id="onsetDateTime" type="text" value="2016-07-14">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					诊断编码:<br><input id="code" type="text" value="A02.003">
+				</td>
+				<td colspan="2">
+					div:<br><input id="div" type="text" size="60" value='<div xmlns="http://www.w3.org/1999/xhtml">沙门菌胃肠炎, 2016-07-14</div>'>
+				</td>
+			</tr>
+
+		</table>
+		<div align="left" hidden="hidden" id="butt">
+			<input id="sure" type="button" value="确定">
+			<input id="cancel" type="button" value="取消">
+		</div>
+	</div>
+	
+	<!--  end -->
+
+	<script type="text/javascript">
+	//数据类型
+	function changedatatype(){
+		var datatype=$("#dataFormat").val();
+		console.log(datatype);
+		$.ajax({
+			url:"/fhirclient/patient/changeType.do",
+			data:{format:datatype},
+			type:"post",
+			cache:false,
+			success:function(data){
+				if(data.state==1)
+					alert(data.message);
+			}
+		});
+	}
+	//服务器
+	function changeserverbase(){
+		contextData.fhirclient=$("#serv").val();
+		var base=$("#serv").val().trim();
+		$.ajax({
+			url:"/fhirclient/condition/changeServerBase.do",
+			data:{serverBase:base},
+			type:"post",
+			cache:false,
+			success:function(data){
+				if(data.state==1)
+					alert(data.message);
+			}
+		});
+	}
+
+	//打开诊断表
+	/* $("#create").click(function(){
+		$("#grid_div").fadeIn();
+		$("#butt").show();
+		$("#div").val("<div xmlns=\'http://www.w3.org/1999/xhtml\'>沙门菌胃肠炎,2016-07-14</div>");
+	});
+
+	$("#cancel").click(function(){
+		$("#grid_div").fadeOut()
+	}); */
+	$("#historyid").change(selectchange);
+	
+	var condition={
+				    "resourceType":"Condition",
+				    
+				    "text":{
+				        "status":"generated",
+				        "div":""
+				    },
+				    "patient":{
+				        "reference":"Patient/657"
+				    },
+				    "encounter":{
+				        "reference":"Encounter/221"
+				    },
+				    "asserter":{
+				        "reference":"Practitioner/890"
+				    },
+				    "code":{
+				        "coding":[
+				            {
+				                "system":"http://www.icd10data.com/icd10pcs",
+				                "code":"A02.003",
+				                "display":"沙门菌胃肠炎"
+				            }
+				        ]
+				    },
+				    "category":{
+				        "coding":[
+				            {
+				                "system":"http://hl7.org/fhir/condition-category",
+				                "code":"diagnosis",
+				                "display":"诊断"
+				            }
+				        ]
+				    },
+				    "clinicalStatus":"active",
+				    "verificationStatus":"confirmed",
+				    "onsetDateTime":"2016-07-14"
+				}
+	
+	
+	//给input赋值
+	function setInput(data){
+		$("#chgid").val(data.id);							//诊断资源id
+		$("#display").val(data.code.coding[0].display);		//诊断名称
+		$("#patientid").val(data.patient.reference);		//患者id
+		//$("#encounterid").val(data.encounter.reference);	//关联就诊号
+		//$("#asserterid").val(data.asserter.reference);		//就诊医生号
+		$("#code").val(data.code.coding[0].code);			//诊断编码
+		$("#onsetDateTime").val(data.onsetDateTime);		//诊断日期
+		$("#div").val(data.text.div);
+	}
+	
+	//获取input的值
+	function getInputs(data){
+		//data.id=$("#chgid").val();
+		data.code.coding[0].display=$("#display").val();		//诊断名称
+		data.patient.reference=$("#patientid").val();		//患者id
+		//data.encounter.reference=$("#encounterid").val();	//关联就诊号
+		//data.asserter.reference=$("#asserterid").val();		//就诊医生号
+		data.code.coding[0].code=$("#code").val();			//诊断编码
+		data.onsetDateTime=$("#onsetDateTime").val();		//诊断日期	
+		data.text.div=$("#div").val();
+	}
+	
+	//查询诊断
+	function searchs(){
+		
+		$("#butt").hide();
+		$("#text").html("记录条数");
+		var chgname=$("#resourcename").val();
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		//传回后台
+		 $.ajax({
+        	url:"/fhirclient/condition/search.do?name="+chgname,
+        	cache:"false",
+        	type:"get",
+        	success:function(result){
+        		$("button").removeAttr("disabled").css("background","#3F48CC");
+        		if(result.state==0){
+	    			console.log(result.data);
+	    			if(result.data.length<=0){
+	    				alert("未找到！");
+	    				return;
+	    			}
+	    			var his = $("#historyid");
+					his.html("");
+	    			model.objs = [];
+	    			for(var i=0;i<result.data.length;i++){
+	    				var p = JSON.parse(result.data[i]);
+	    				console.log(p);
+	    				model.objs[i] = p;
+	    				var value=i;
+						var text=model.objs[i].id;
+						his.append("<option value='"+value+"'>"+text+"</option>");
+	    			}
+	    			model.obj = model.objs[0];
+	    			setInput(model.obj);
+	    		}else{
+	    			alert(result.message);
+	    		}
+        	}
+        });
+	}
+	
+	function selectchange(){
+		var index=$("#historyid").val();
+		setInput(model.objs[index]);
+		//console.log(model.objs[index]);
+	}
+	
+	//删除诊断
+	function deletes(){
+		if(confirm("确定删除？")){
+			var id=$("#resourceId").val();
+			$("button").attr("disabled","disabled").css("background","gray");
+			//$("button").removeAttr("disabled").css("background","#3F48CC");
+			//传回后台
+			 $.ajax({
+	        	url:"/fhirclient/condition/del.do?id="+id,
+	        	cache:"false",
+	        	type:"get",
+	        	success:function(result){
+	        		$("button").removeAttr("disabled").css("background","#3F48CC");
+	        		if(result.state==0){
+		    			alert("删除成功");
+		    			model.obj={};
+		    			//setInput(model.obj);
+		    		}else{
+		    			alert(result.message);
+		    		}
+	        	}
+	        });
+        }
+	}
+	
+	//获得历史版本
+	function history(){
+		$("#text").html("历史记录");
+		var id=$("#resourceId").val();
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		//到后台
+		$.ajax({
+			url:"/fhirclient/condition/his.do?id="+id,
+			type:"get",
+			cache:"false",
+			success:function(result){
+				$("button").removeAttr("disabled").css("background","#3F48CC");
+				if(result.state==0){
+	    			console.log(result.data);
+	    			model.objs = [];
+	    			var his = $("#historyid");
+					his.html("");
+	    			for(var i=0;i<result.data.length;i++){
+	    				var c = JSON.parse(result.data[i]);
+	    				console.log(c);
+	    				model.objs[i] = c;
+	    				
+	    				var value=i;
+						var text=model.objs[i].meta.versionId;
+						his.append("<option value='"+value+"'>"+text+"</option>");
+	    			}
+	    			model.obj = model.objs[0];
+	    			setInput(model.obj);
+	    		}else{
+	    			alert(result.message);
+	    		}
+			}
+		});
+	}
+	
+	//更新诊断
+	function update(){
+		if(confirm("确定更新?")){
+			getInputs(model.obj);
+			var str = JSON.stringify(model.obj);
+			$("button").attr("disabled","disabled").css("background","gray");
+			//$("button").removeAttr("disabled").css("background","#3F48CC");
+			//传回后台
+			 $.ajax({
+	        	url:"/fhirclient/condition/update.do",
+	        	cache:"false",
+	        	data:{data:str},
+	        	type:"post",
+	        	success:function(result){
+	        		$("button").removeAttr("disabled").css("background","#3F48CC");
+	        		if(result.state==0){
+	        			alert("更新成功");
+	        		}else{
+	        			alert(result.message);
+	        		}
+	        	}
+	        });
+        }
+	}
+	
+	//读
+	function reads(){
+		var id=$("#resourceId").val();
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		//到后台
+		$.ajax({
+			url:"/fhirclient/condition/read.do?id="+id,
+			type:"get",
+			cache:"fasle",
+			success:function(result){
+				$("button").removeAttr("disabled").css("background","#3F48CC");
+				if(result.state==0){
+        			model.obj = JSON.parse(result.data);
+        			setInput(model.obj);
+        		}else{
+        			alert(result.message);
+        		}
+			}
+		});
+	}
+	
+	//创建诊断
+	function create(){
+		getInputs(condition);
+		var str = JSON.stringify(condition);
+		console.log(condition);
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		//传回后台
+		 $.ajax({
+        	url:"/fhirclient/condition/create.do",
+        	cache:"false",
+        	data:{data:str},
+        	type:"post",
+        	success:function(result){
+        		$("button").removeAttr("disabled").css("background","#3F48CC");
+        		if(result.state==0){
+        			alert("创建成功！ID:"+result.data);
+        		}else{
+        			alert(result.message);
+        		}
+        	}
+        });
+	}
+	</script>
+</div>

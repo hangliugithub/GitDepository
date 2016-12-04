@@ -54,8 +54,8 @@ public class DiagnosticReportProvider implements IResourceProvider{
 	
 	@Read(version = false)
 	public DiagnosticReport readDiagnosticReport(@IdParam IdDt id) {
+		System.out.println("readDiagnosticReport.id="+id);
 		try {
-			System.out.println(id.getValue().split("/")[1]);
 			DiagnosticReport d= service.readDiag(id.getValue().split("/")[1]);
 			//System.out.println(MyParser.parseToXML(d));
 			//System.out.println(d.getContained().getContainedResources().size());//1
@@ -68,7 +68,7 @@ public class DiagnosticReportProvider implements IResourceProvider{
 	
 	@Update()
 	public MethodOutcome updateDiagnosticReport(@IdParam IdDt id, @ResourceParam DiagnosticReport diag) {
-
+		System.out.println("updateDiagnosticReport.id="+id);
 		try {
 			diag.setId(id.getValue().split("/")[1]);
 			diag = service.updateDiagnosticReport(diag);
@@ -84,8 +84,7 @@ public class DiagnosticReportProvider implements IResourceProvider{
 	@Search()
 	public List<DiagnosticReport> findDiagnosticReportsByName(@RequiredParam(name = DiagnosticReport.SP_CODE) StringDt name) {
 		try {
-			System.out.println(name);
-			
+			System.out.println("findDiagnosticReportsByName.name="+name);
 			List<DiagnosticReport> list = service.findByName(name.getValue());
 			return list;
 		} catch (Exception e) {
@@ -96,6 +95,7 @@ public class DiagnosticReportProvider implements IResourceProvider{
 	
 	@Delete
 	public void deleteDiagnosticReport(@IdParam IdDt id) {
+		System.out.println("deleteDiagnosticReport.id="+id);
 		try {
 			int num = service.delDiag(id.getValue().split("/")[1]);
 			if (num<=0)
@@ -108,7 +108,7 @@ public class DiagnosticReportProvider implements IResourceProvider{
 	@History()
 	public List<DiagnosticReport> getDiagnosticReportHistory(@IdParam IdDt id) {
 		try {
-			System.out.println(id);
+			System.out.println("getDiagnosticReportHistory.id="+id);
 			List<DiagnosticReport> list = service.findHisDiag(id.getValue().split("/")[1]);
 			return list;
 		} catch (Exception e) {

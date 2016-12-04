@@ -53,7 +53,7 @@ public class ConditionProvider implements IResourceProvider {
 	@Read(version = false)
 	public Condition readCondition(@IdParam IdDt id) {
 		try {
-			System.out.println(id.getValue().split("/")[1]);
+			System.out.println("readCondition.id="+id);
 			Condition p = service.readCondition(id.getValue().split("/")[1]);
 			return p;
 		} catch (Exception e) {
@@ -67,6 +67,7 @@ public class ConditionProvider implements IResourceProvider {
 	public MethodOutcome updateCondition(@IdParam IdDt id, @ResourceParam Condition condition) {
 
 		try {
+			System.out.println("updateCondition.id="+id);
 			condition.setId(id.getValue().split("/")[1]);
 			condition = service.updateCondition(condition);
 		} catch (Exception e) {
@@ -81,7 +82,7 @@ public class ConditionProvider implements IResourceProvider {
 	@Search()
 	public List<Condition> findConditionsByName(@RequiredParam(name = Condition.SP_CODE) StringDt name) {
 		try {
-			System.out.println(name);
+			System.out.println("findConditionsByName.name="+name);
 			
 			List<Condition> list = service.findByName(name.getValue());
 			return list;
@@ -93,6 +94,7 @@ public class ConditionProvider implements IResourceProvider {
 	
 	@Delete
 	public void deleteCondition(@IdParam IdDt id) {
+		System.out.println("deleteCondition.id="+id);
 		try {
 			int num = service.delCondition(id.getValue().split("/")[1]);
 			if (num<=0)
@@ -104,8 +106,8 @@ public class ConditionProvider implements IResourceProvider {
 	
 	@History()
 	public List<Condition> getConditionHistory(@IdParam IdDt id) {
+		System.out.println("getConditionHistory.id="+id);
 		try {
-			System.out.println(id);
 			List<Condition> list = service.findHisCondition(id.getValue().split("/")[1]);
 			return list;
 		} catch (Exception e) {

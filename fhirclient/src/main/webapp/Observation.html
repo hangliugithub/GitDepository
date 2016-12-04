@@ -1,0 +1,427 @@
+<div id="Observation" >
+	<p>
+		<button id="create" onclick="create()">创建</button>
+		<button id="update" onclick="update()">更新</button>
+		<button id="del" onclick="deletes()">删除</button>&emsp;&emsp;&emsp;
+		<input style="text" id="resourceId" placeholder="请输入检测资源ID">
+		<button id="read" onclick="reads()">读取</button>
+		<button id="history" onclick="history()">所有历史版本</button>
+		&emsp;&emsp;&emsp;
+		<input style="text" id="resourcename" placeholder="请输入检测项目名称">
+		<button id="search" onclick="searchs()">搜索</button>
+	</p>
+	
+	<!--  start -->
+	<div id="grid_div" class="grid">
+		<span id="text">记录条数：</span>
+		<select id="historyid" onchange="selectchange()"></select>
+    	<table  class="table">
+    		<caption align="top" style="font-size: 20px">检验项目结果(Observation)</caption>
+    		<tr>
+    			<td>
+    				资源id:<br><input id="cheakid" type="text" readonly="readonly">
+    			</td>
+				<td> 
+					检测项目名称:<br><input id="display" name="display" type="text" value="血红蛋白定量">
+				</td>
+				<td>
+					患者id:<br><input id="patientid" name="patid" type="text" value="Patient/f001">
+				</td>
+				<td>
+					结果业务标识:<br><input id="identifier" type="text" value="6328">
+				</td>
+			</tr>	
+			<tr>
+				<td>
+					检测项目编码:<br><input id="code" type="text" value="718-7">
+				</td>
+				<td>
+					患者名字:<br><input id="patname" type="text" value="李明">
+				</td>
+				<td>
+					检测医生:<br><input id="doctorname" type="text" value="张林">
+				</td>
+				<td>
+					检测医生编号:<br><input id="reference" type="text" value="Practitioner/f005">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					检测起始时间:<br><input id="start" type="text" value="2013-04-02T09:30:10Z">
+				</td>
+				<td>
+					检测结束时间:<br><input id="end" type="text" value="2013-05-02T09:30:10Z">
+				</td>
+				<td>
+					发布时间:<br><input id="issued" type="text" value="2013-07-02T09:30:10Z">
+				</td>
+				<td>
+					检测结果判定:<br><input id="interpretation" type="text" value="L">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					结果值:<br><input id="valueQuantity" type="text" value="7.5">
+				</td>
+				<td>
+					值单位:<br><input id="unit" type="text" value="g/dl">
+				</td>
+				<td>
+					标准上限:<br><input id="high" type="text" value="10.0">
+				</td>
+				<td>
+					标准单位 :<br><input id="unit2" type="text" value="g/dl">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					标准下限 :<br><input id="low" type="text" value="7.8">
+				</td>
+				<td>
+					标准单位:<br><input id="unit1" type="text" value="g/dl">
+				</td>
+				<td colspan=2>
+					div:<br><input id="divs" type="text" value='<div xmlns="http://www.w3.org/1999/xhtml"> 报告文本描述部分：。。。。</div>' size="60">
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	<!--  end -->
+
+	<script type="text/javascript">
+	
+	//数据类型
+	function changedatatype(){
+		var datatype=$("#dataFormat").val();
+		$.ajax({
+			url:"/fhirclient/patient/changeType.do",
+			data:{format:datatype},
+			type:"post",
+			cache:false,
+			success:function(data){
+				if(data.state==1)
+					alert(data.message);
+			}
+		});
+	}
+	//服务器
+	function changeserverbase(){
+		contextData.fhirclient=$("#serv").val();
+		var base=$("#serv").val().trim();
+		$.ajax({
+			url:"/fhirclient/observation/changeServerBase.do",
+			data:{serverBase:base},
+			cache:false,
+			type:"post",
+			success:function(data){
+				if(data.state==1)
+					alert(data.message);
+			}
+		});
+	}
+	
+	//打开诊断表
+	/* $("#create").click(function(){
+		$("#grid_div").fadeIn();
+		$("#butt").show();
+		$("#divs").val("<div xmlns=\"http://www.w3.org/1999/xhtml\"/>");
+	}); */
+
+	/* $("#cancel").click(function(){
+		$("#grid_div").fadeOut()
+	}); */
+	
+	var observation={
+				    "resourceType":"Observation",
+				    "text":{
+				        "status":"generated",
+				        "div":"<div xmlns=\"http://www.w3.org/1999/xhtml\"/>"
+				    },
+				    "identifier":[
+				        {
+				            "use":"official",
+				            "value":"6328"
+				        }
+				    ],
+				    "status":"final",
+				    "code":{
+				        "coding":[
+				            {
+				                "system":"http://loinc.org",
+				                "code":"718-7",
+				                "display":"血红蛋白定量"
+				            }
+				        ]
+				    },
+				    "subject":{
+				        "reference":"Patient/f001",
+				        "display":"李明"
+				    },
+				    "effectivePeriod":{
+				        "start":"2013-04-02T09:30:10Z",
+				        "end":"2013-05-02T09:30:10Z"
+				    },
+				    "issued":"2013-07-02T09:30:10Z",
+				    "performer":[
+				        {
+				            "reference":"Practitioner/f005",
+				            "display":"张林"
+				        }
+				    ],
+				    "valueQuantity":{
+				        "value":7.5,
+				        "comparator":">=",
+				        "unit":"g/dl",
+				        "system":"http://unitsofmeasure.org",
+				        "code":"g/dl"
+				    },
+				    "interpretation":{
+				        "coding":[
+				            {
+				                "system":"http://hl7.org/fhir/v2/0078",
+				                "code":"L"
+				            }
+				        ]
+				    },
+				    "referenceRange":[
+				        {
+				            "low":{
+				                "value":7.8,
+				                "unit":"g/dl",
+				                "system":"http://unitsofmeasure.org"
+				            },
+				            "high":{
+				                "value":10.0,
+				                "unit":"g/dl",
+				                "system":"http://unitsofmeasure.org"
+				            }
+				        }
+				    ]
+				}
+	
+	
+	//给input赋值
+	function setInput(data){
+		$("#cheakid").val(data.id);				//检测资源id
+		$("#display").val(data.code.coding[0].display);					//检测项目名称
+		$("#patientid").val(data.subject.reference);				//患者id
+		$("#identifier").val(data.identifier[0].value);				//检测结果业务标识
+		$("#code").val(data.code.coding[0].code);					//检测项目编码
+		$("#patname").val(data.subject.display);			//患者名字
+		$("#start").val(data.effectivePeriod.start);					//检测开始时间
+		$("#end").val(data.effectivePeriod.end);			//检测结束时间
+		$("#issued").val(data.issued);					//检测发布时间
+		$("#doctorname").val(data.performer[0].display);				//检测医生名字
+		$("#reference").val(data.performer[0].reference);				//检测医生编号
+		$("#valueQuantity").val(data.valueQuantity.value);			//检测结果值
+		$("#unit").val(data.valueQuantity.unit);					//结果值单位
+		$("#interpretation").val(data.interpretation.coding[0].code);			//结果判定  L  or  H
+		$("#low").val(data.referenceRange[0].low.value);						//最低值
+		$("#high").val(data.referenceRange[0].high.value);					//最高值
+		$("#unit1").val(data.referenceRange[0].low.unit);					//单位
+		$("#unit2").val(data.referenceRange[0].high.unit);					//单位
+		$("#divs").val(data.text.div);					//
+	}
+	
+	//获取input的值
+	function getInputs(data){
+	//	data.id=$("#cheakid").val();				//检测资源id
+		data.code.coding[0].display=$("#display").val();					//检测项目名称
+		data.subject.reference=$("#patientid").val();				//患者id
+		data.identifier[0].value=$("#identifier").val();				//检测结果业务标识
+		data.code.coding[0].code=$("#code").val();					//检测项目编码
+		data.subject.display=$("#patname").val();			//患者名字
+		data.effectivePeriod.start=$("#start").val();					//检测开始时间
+		data.effectivePeriod.end=$("#end").val();			//检测结束时间
+		data.issued=$("#issued").val();					//检测发布时间
+		data.performer[0].display=$("#doctorname").val();				//检测医生名字
+		data.performer[0].reference=$("#reference").val();				//检测医生编号
+		data.valueQuantity.value=$("#valueQuantity").val();			//检测结果值
+		data.valueQuantity.unit=$("#unit").val();					//结果值单位
+		data.interpretation.coding[0].code=$("#interpretation").val();			//结果判定  L  or  H
+		data.referenceRange[0].low.value=$("#low").val();						//最低值
+		data.referenceRange[0].high.value=$("#high").val();					//最高值
+		data.referenceRange[0].low.unit=$("#unit1").val();					//单位
+		data.referenceRange[0].high.unit=$("#unit2").val();					//单位
+		data.text.div=$("#divs").val();					//
+	}
+	
+	//查询诊断
+	function searchs(){
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		$("#butt").hide();
+		$("#text").html("记录条数");
+		var cheakname=$("#resourcename").val();
+		//传回后台
+		 $.ajax({
+        	url:"/fhirclient/observation/search.do?name="+cheakname,
+        	cache:"false",
+        	type:"get",
+        	success:function(result){
+        		$("button").removeAttr("disabled").css("background","#3F48CC");
+        		if(result.state==0){
+	    			console.log(result.data);
+	    			if(result.data.length<=0){
+	    				alert("未找到！");
+	    				return;
+	    			}
+	    			var his = $("#historyid");
+					his.html("");
+	    			model.objs = [];
+	    			for(var i=0;i<result.data.length;i++){
+	    				var ob = JSON.parse(result.data[i]);
+	    				console.log(ob);
+	    				model.objs[i] = ob;
+	    				var value=i;
+						var text=model.objs[i].id;
+						his.append("<option value='"+value+"'>"+text+"</option>");
+	    			}
+	    			model.obj = model.objs[0];
+	    			setInput(model.obj);
+	    		}else{
+	    			alert(result.message);
+	    		}
+        	}
+        });
+	}
+	
+	function selectchange(){
+		var index=$("#historyid").val();
+		setInput(model.objs[index]);
+	}
+	
+	//删除诊断
+	function deletes(){
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		if(confirm("确定删除？")){
+			var id=$("#cheakid").val();
+			//传回后台
+			 $.ajax({
+	        	url:"/fhirclient/observation/del.do?id="+id,
+	        	cache:"false",
+	        	type:"get",
+	        	success:function(result){
+	        		$("button").removeAttr("disabled").css("background","#3F48CC");
+	        		if(result.state==0){
+		    			alert("删除成功");
+		    			model.obj={};
+		    			//setInput(model.obj);
+		    		}else{
+		    			alert(result.message);
+		    		}
+	        	}
+	        });
+        }
+	}
+	
+	//获得历史版本
+	function history(){
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		$("#text").html("历史记录");
+		var id=$("#resourceId").val();
+		//到后台
+		$.ajax({
+			url:"/fhirclient/observation/his.do?id="+id,
+			type:"get",
+			cache:"false",
+			success:function(result){
+				$("button").removeAttr("disabled").css("background","#3F48CC");
+				if(result.state==0){
+	    			console.log(result.data);
+	    			model.objs = [];
+	    			var his = $("#historyid");
+					his.html("");
+	    			for(var i=0;i<result.data.length;i++){
+	    				var ob = JSON.parse(result.data[i]);
+	    				console.log(ob);
+	    				model.objs[i] = ob;
+	    				
+	    				var value=i;
+						var text=model.objs[i].meta.versionId;
+						his.append("<option value='"+value+"'>"+text+"</option>");
+	    			}
+	    			model.obj = model.objs[0];
+	    			setInput(model.obj);
+	    		}else{
+	    			alert(result.message);
+	    		}
+			}
+		});
+	}
+	
+	//更新诊断
+	function update(){
+		if(confirm("确定更新？")){
+			$("button").attr("disabled","disabled").css("background","gray");
+			//$("button").removeAttr("disabled").css("background","#3F48CC");
+			getInputs(model.obj);
+			var str = JSON.stringify(model.obj);
+			//传回后台
+			 $.ajax({
+	        	url:"/fhirclient/observation/update.do",
+	        	cache:"false",
+	        	data:{data:str},
+	        	type:"post",
+	        	success:function(result){
+	        		$("button").removeAttr("disabled").css("background","#3F48CC");
+	        		if(result.state==0){
+	        			alert("更新成功");
+	        		}else{
+	        			alert(result.message);
+	        		}
+	        	}
+	        });
+        }
+	}
+	
+	//读
+	function reads(){
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		var id=$("#resourceId").val();
+		//到后台
+		$.ajax({
+			url:"/fhirclient/observation/read.do?id="+id,
+			type:"get",
+			cache:"fasle",
+			success:function(result){
+				$("button").removeAttr("disabled").css("background","#3F48CC");
+				if(result.state==0){
+        			model.obj = JSON.parse(result.data);
+        			setInput(model.obj);
+        		}else{
+        			alert(result.message);
+        		}
+			}
+		});
+	
+	}
+	
+	//创建诊断
+	function create(){
+		$("button").attr("disabled","disabled").css("background","gray");
+		//$("button").removeAttr("disabled").css("background","#3F48CC");
+		getInputs(observation);
+		var str = JSON.stringify(observation);
+		//传回后台
+		 $.ajax({
+        	url:"/fhirclient/observation/create.do",
+        	cache:"false",
+        	data:{data:str},
+        	type:"post",
+        	success:function(result){
+        		$("button").removeAttr("disabled").css("background","#3F48CC");
+        		if(result.state==0){
+        			alert("创建成功！ID:"+result.data);
+        		}else{
+        			alert(result.message);
+        		}
+        	}
+        });
+	}
+	</script>
+</div>

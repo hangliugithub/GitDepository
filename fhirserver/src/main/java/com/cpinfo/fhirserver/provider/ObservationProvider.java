@@ -53,7 +53,7 @@ public class ObservationProvider implements IResourceProvider {
 	@Read(version = false)
 	public Observation readObservation(@IdParam IdDt id) {
 		try {
-			System.out.println(id.getValue().split("/")[1]);
+			System.out.println("readObservation.id="+id);
 			Observation o= service.readObservation(id.getValue().split("/")[1]);
 			return o;
 		} catch (Exception e) {
@@ -64,7 +64,7 @@ public class ObservationProvider implements IResourceProvider {
 	
 	@Update()
 	public MethodOutcome updateObservation(@IdParam IdDt id, @ResourceParam Observation obs) {
-
+		System.out.println("updateObservation.id="+id);
 		try {
 			obs.setId(id.getValue().split("/")[1]);
 			obs = service.updateObservation(obs);
@@ -80,8 +80,7 @@ public class ObservationProvider implements IResourceProvider {
 	@Search()
 	public List<Observation> findObservationsByName(@RequiredParam(name = Observation.SP_CODE) StringDt name) {
 		try {
-			System.out.println(name);
-			
+			System.out.println("findObservationsByName.name"+name);
 			List<Observation> list = service.findByName(name.getValue());
 			return list;
 		} catch (Exception e) {
@@ -92,6 +91,7 @@ public class ObservationProvider implements IResourceProvider {
 	
 	@Delete
 	public void deleteObservation(@IdParam IdDt id) {
+		System.out.println("deleteObservation.id="+id);
 		try {
 			int num = service.delObservation(id.getValue().split("/")[1]);
 			if (num<=0)
@@ -104,7 +104,7 @@ public class ObservationProvider implements IResourceProvider {
 	@History()
 	public List<Observation> getObservationHistory(@IdParam IdDt id) {
 		try {
-			System.out.println(id);
+			System.out.println("getObservationHistory.id="+id);
 			List<Observation> list = service.findHisObservation(id.getValue().split("/")[1]);
 			return list;
 		} catch (Exception e) {
